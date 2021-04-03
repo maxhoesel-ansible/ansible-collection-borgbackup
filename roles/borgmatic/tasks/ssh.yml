@@ -1,0 +1,54 @@
+- block:
+  - name: Verify that ssh_key_path is present in custom ssh_command
+    assert:
+      that: "'-i ' + borgmatic_ssh_key_path in borgmatic_storage_ssh_command"
+      fail_msg: >
+        custom_ssh_command does not include ssh_key_path and ssh_manage_key is enabled.
+        To use the ssh key management capabilities of this role, please add this to your custom
+        ssh command: "-i {{ borgmatic_ssh_key_path }}"
+    when: borgmatic_storage_ssh_command is defined
+
+  - name: Look for existing ssh key
+    stat:
+      path: "{{ borgmatic_ssh_key_path }}"
+    register: borgmatic_ssh_keys_current
+  - name: Generate SSH keypair
+    command: "ssh-keygen -b 2048 -t rsa -f {{ borgmatic_ssh_key_path }} -q -N ''"
+    when: not borgmatic_ssh_keys_current.stat.exists
+  when: borgmatic_ssh_manage_key
+
+
+- block:
+  - name: Verify that ssh_known_hosts_file is present in custom ssh_command
+    assert:
+      that: "'-o UserKnownHostsFile=' + borgmatic_ssh_known_hosts_file in borgmatic_storage_ssh_command"
+      fail_msg: >
+        custom_ssh_command does not include ssh_known_hosts_file and ssh_manage_key is enabled.
+        To use the ssh key management capabilities of this role, please add this to your custom
+        ssh command: "-o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}"
+    when: borgmatic_storage_ssh_command is defined
+
+  # ssh-keyscan returns a multiline string, with each line containing one known_hosts entry
+  # We call the known_hosts task once for each remote host, with the task itself
+  # then splitting the lines into individual entries that ansible.builtin.known_hosts
+  # can understand. I'm sure there is an easier way to do this, but this works for now
+  # and doesn't throw up and idempotency issues
+  - name: Get remote server ssh fingerprints
+    command: "ssh-keyscan -H {{ (item.split('@').1).split(':').0 }}" # get the actual fqdn from the repo definition
+    changed_when: no
+    register: borgmatic_ssh_fingerprints
+    loop: "{{ borgmatic_location_repositories | select('match', '.*@.*:.*') }}" # only match remote ssh hosts
+  - name: known_hosts are registered
+    include_tasks: ssh_known_hosts.yml
+    loop: "{{ borgmatic_ssh_fingerprints.results }}"
+    loop_control:
+      loop_var: host
+  when: borgmatic_ssh_manage_known_hosts
+
+- block:
+  - name: Generate ssh command
+    set_fact:
+      borgmatic_storage_ssh_command: "ssh{% if borgmatic_ssh_manage_key %} -i {{ borgmatic_ssh_key_path }}{% endif %}{% if borgmatic_ssh_manage_known_hosts %} -o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}{% endif %}"
+  when: >
+    not borgmatic_storage_ssh_command is defined and
+    (borgmatic_ssh_manage_known_hosts or borgmatic_ssh_manage_key)

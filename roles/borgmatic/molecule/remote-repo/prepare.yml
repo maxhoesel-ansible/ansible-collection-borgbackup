@@ -1,0 +1,39 @@
+- hosts: ubuntu:debian
+  tasks:
+    - name: Update cache
+      apt:
+        update_cache: yes
+
+- hosts: clients
+  tasks:
+    - name: Install ssh
+      package:
+        name: ssh
+    - name: Generate ssh key # noqa no-changed-when
+      command: "ssh-keygen -b 2048 -t rsa -f /tmp/borgmatic_id_rsa -q -N ''"
+    - name: Read ssh pubkey
+      command: cat /tmp/borgmatic_id_rsa.pub
+      changed_when: no
+      register: borgmatic_host_key
+    - name: Generate host entry
+      set_fact:
+        borg_server_host_entry:
+          name: "{{ ansible_fqdn }}"
+          key: "{{ borgmatic_host_key.stdout }}"
+
+- hosts: servers
+  tasks:
+    - name: Install sshd
+      package:
+        name: openssh-server
+    - name: Start sshd
+      systemd:
+        name: sshd
+        state: started
+    - name: Generate hosts keys list
+      set_fact:
+        borg_server_authorized_hosts: "{{ (borg_server_authorized_hosts|default([])) + [hostvars[item]['borg_server_host_entry']] }}"
+      loop: "{{ groups['clients'] }}"
+    - name: Install borg server
+      include_role:
+        name: borg_server

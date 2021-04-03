@@ -1,0 +1,5 @@
+{% for fp in borgmatic_ssh_fingerprints.results %}
+{% for key in fp.stdout_lines | sort %}
+{{ key }}
+{% endfor %}
+{% endfor %}

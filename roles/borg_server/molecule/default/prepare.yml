@@ -1,0 +1,7 @@
+- hosts: ubuntu:debian
+  tasks:
+    - name: Update cache and install deps
+      apt:
+        name:
+          - openssh-server
+        update_cache: yes

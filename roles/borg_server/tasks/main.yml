@@ -1,0 +1,47 @@
+---
+# tasks file for borgmatic
+
+- name: Verify that required parameters are set
+  assert:
+    that:
+      - borg_server_authorized_hosts is defined
+      - borg_server_authorized_hosts | length > 0
+
+- name: Borgbackup is installed
+  package:
+    name: borgbackup
+
+- name: Borg server user is present
+  user:
+    name: "{{ borg_server_user }}"
+    home: "{{ borg_server_config_path }}"
+    password: "*"
+    shell: /bin/bash
+
+- name: Borg server dirs are present
+  file:
+    path: "{{ item }}"
+    owner: "{{ borg_server_user }}"
+    group: "{{ borg_server_user }}"
+    mode: "750"
+    state: directory
+  loop:
+    - "{{ borg_server_backups_path }}"
+    - "{{ borg_server_config_path }}/.ssh"
+
+- name: Borg server host backup dirs are present
+  file:
+    path: "{{ borg_server_backups_path }}/{{ item.name }}"
+    owner: "{{ borg_server_user }}"
+    group: "{{ borg_server_user }}"
+    mode: "750"
+    state: directory
+  loop: "{{ borg_server_authorized_hosts }}"
+
+- name: authorized_keys is installed
+  template:
+    src: authorized_keys.j2
+    dest: "{{ borg_server_config_path }}/.ssh/authorized_keys"
+    owner: "{{ borg_server_user }}"
+    group: "{{ borg_server_user }}"
+    mode: "640"

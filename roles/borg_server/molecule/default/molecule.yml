@@ -1,0 +1,53 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  # Note on containers:
+  # - We use the images provided by geerlingguy, as they provide out-of-the-box
+  #   support for Ansible and systemd (needed to test service management).
+  # - The containers run as privileged containers so that we can
+  #   use systemd functionality. This *should* be possible with unpriliged
+  #   containers as well, but is quite the headache.
+  # - they are connected to a shared network to allow simulating a remote CA
+  - name: borgmatic-ubuntu-20
+    hostname: borgmatic-ubuntu-20.localdomain
+    groups:
+      - ubuntu
+    image: "geerlingguy/docker-ubuntu2004-ansible"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    override_command: false
+    pre_build_image: true
+
+  - name: borgmatic-ubuntu-18
+    hostname: borgmatic-ubuntu-18.localdomain
+    groups:
+      - ubuntu
+    image: "geerlingguy/docker-ubuntu1804-ansible"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    override_command: false
+    pre_build_image: true
+
+  - name: borgmatic-debian-10
+    hostname: borgmatic-debian10.localdomain
+    groups:
+      - ubuntu
+    image: "geerlingguy/docker-debian10-ansible"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    override_command: false
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+  config_options:
+    ssh_connection:
+      pipelining: yes
+verifier:
+  name: ansible

@@ -1,0 +1,24 @@
+---
+# defaults file for borgmatic
+# Non-required borgmatic configuration variables are not set by default and do not appear here.
+
+borgmatic_setup_backup: yes
+borgmatic_init_repos: yes
+borgmatic_init_encryption: repokey
+
+borgmatic_config_path: /etc/borgmatic
+
+borgmatic_ssh_manage_key: yes
+borgmatic_ssh_key_path: "{{ borgmatic_config_path }}/id_rsa"
+borgmatic_ssh_manage_known_hosts: yes
+borgmatic_ssh_known_hosts_file: "{{ borgmatic_config_path }}/known_hosts"
+
+#borgmatic_location_source_directories:
+#borgmatic_location_repositories Required
+
+borgmatic_schedule_on: daily
+borgmatic_schedule_max_random_delay: 1800
+borgmatic_schedule_persistent: no
+borgmatic_schedule_wakeup: no
+
+borgmatic_run_backup: no

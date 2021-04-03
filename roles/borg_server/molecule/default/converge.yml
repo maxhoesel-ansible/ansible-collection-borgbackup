@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include borg_server"
+      include_role:
+        name: "borg_server"
+      vars:
+        borg_server_authorized_hosts:
+          - name: "test-host.localdomain"
+            key: "{{ lookup('file', 'files/id_rsa.pub') }}"

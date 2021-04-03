@@ -1,0 +1,29 @@
+---
+- name: Verify
+  hosts: clients
+  tasks:
+  # Ansibles service_facts doesn't return timer objects,
+  # so we check for its status this way instead
+  - name: Check timer status
+    systemd:
+      name: 'borgmatic.timer'
+      enabled: yes
+    register: borgmatic_timer_enabled
+  - name: Verify that timer is enabled
+    assert:
+      that: not borgmatic_timer_enabled.changed
+
+  - name: Wait for backup to finish
+    wait_for:
+      path: "/var/borg-server/{{ ansible_fqdn }}/molecule/lock.roster"
+      state: absent
+      timeout: 120
+    delegate_to: borgmatic-server
+
+  - name: Get backup information
+    command: borgmatic list --json
+    changed_when: no
+    register: borgmatic_backups
+  - name: Verify that backup got created
+    assert:
+      that: (borgmatic_backups.stdout | from_json).0.archives | length == 1

@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include borgmatic"
+      include_role:
+        name: "borgmatic"
+      vars:
+        borgmatic_run_backup: yes
+        borgmatic_location_source_directories:
+          - /etc
+        borgmatic_location_repositories:
+          - /tmp/myrepo
+        borgmatic_storage_encryption_passphrase: molecule-test
+        borgmatic_retention_keep_daily: 3

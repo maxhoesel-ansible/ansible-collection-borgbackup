@@ -1,0 +1,13 @@
+- name: Borg and borgmatic are installed
+  apt:
+    name:
+      - borgmatic
+      - borgbackup
+
+- name: Borgmatic config path is present
+  file:
+    path: "{{ borgmatic_config_path }}"
+    state: directory
+    mode: "640"
+    owner: root
+    group: root

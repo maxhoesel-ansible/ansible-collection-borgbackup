@@ -1,0 +1,19 @@
+---
+# tasks file for borgmatic
+
+- name: Verify that required parameters are set
+  assert:
+    that:
+      - borgmatic_location_source_directories is defined
+      - borgmatic_location_source_directories | length > 0
+      - borgmatic_location_repositories is defined
+      - borgmatic_location_repositories | length > 0
+  when: borgmatic_setup_backup
+
+- include: install.yml
+
+- block:
+  - include: ssh.yml
+  - include: config.yml
+  - include: schedule.yml
+  when: borgmatic_setup_backup

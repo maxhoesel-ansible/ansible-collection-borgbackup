@@ -1,0 +1,10 @@
+---
+# defaults file for borg_server
+
+borg_server_user: borg
+borg_server_config_path: /etc/borg-server
+borg_server_backups_path: /var/borg-server
+
+#borg_server_authorized_hosts:
+#  - name: myhost1.my.domain
+#    key: ssh-rsa ....

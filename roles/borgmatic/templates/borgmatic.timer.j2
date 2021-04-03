@@ -1,0 +1,11 @@
+[Unit]
+Description=Run borgmatic backup
+
+[Timer]
+OnCalendar={{ borgmatic_schedule_on }}
+Persistent={{ borgmatic_schedule_persistent }}
+WakeSystem={{ borgmatic_schedule_wakeup }}
+RandomizedDelaySec={{ borgmatic_schedule_max_random_delay }}
+
+[Install]
+WantedBy=timers.target

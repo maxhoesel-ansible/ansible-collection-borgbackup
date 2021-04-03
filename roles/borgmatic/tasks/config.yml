@@ -1,0 +1,76 @@
+- name: Get config vars
+  set_fact:
+    borgmatic_location_vars: "{{ lookup('varnames', '^borgmatic_location_') }}"
+    borgmatic_storage_vars: "{{ lookup('varnames', '^borgmatic_storage_') }}"
+    borgmatic_retention_vars: "{{ lookup('varnames', '^borgmatic_retention_') }}"
+    borgmatic_consistency_vars: "{{ lookup('varnames', '^borgmatic_consistency_') }}"
+    borgmatic_hooks_vars: "{{ lookup('varnames', '^borgmatic_hooks_') }}"
+    borgmatic_config: {}
+    borgmatic_retention_keeps: "{{ lookup('varnames', '^borgmatic_retention_keep_') }}"
+
+- name: Verify that at least one keep option is set
+  assert:
+    that:
+      - borgmatic_retention_keeps is string
+      - borgmatic_retention_keeps | length > 0
+
+# TODO: Use an inner loop to simplify config generation
+- block:
+  - name: Generate borgmatic config [location]
+    set_fact:
+      borgmatic_location: "{{ borgmatic_location|default({}) | combine({ (item|replace('borgmatic_location_', '')): lookup('vars', item) }) }}"
+    loop: "{{ borgmatic_location_vars.split(',') }}"
+  - name: Update global config
+    set_fact:
+      borgmatic_config: "{{ borgmatic_config | combine({ 'location': borgmatic_location }) }}"
+  when: borgmatic_location_vars is string
+- block:
+  - name: Generate borgmatic config [storage]
+    set_fact:
+      borgmatic_storage: "{{ borgmatic_storage|default({}) | combine({ (item|replace('borgmatic_storage_', '')): lookup('vars', item) }) }}"
+    loop: "{{ borgmatic_storage_vars.split(',') }}"
+  - name: Update global config
+    set_fact:
+      borgmatic_config: "{{ borgmatic_config | combine({ 'storage': borgmatic_storage }) }}"
+  when: borgmatic_storage_vars is string
+- block:
+  - name: Generate borgmatic config [retention]
+    set_fact:
+      borgmatic_retention: "{{ borgmatic_retention|default({}) | combine({ (item|replace('borgmatic_retention_', '')): lookup('vars', item) }) }}"
+    loop: "{{ borgmatic_retention_vars.split(',') }}"
+  - name: Update global config
+    set_fact:
+      borgmatic_config: "{{ borgmatic_config | combine({ 'retention': borgmatic_retention }) }}"
+  when: borgmatic_retention_vars is string
+- block:
+  - name: Generate borgmatic config [consistency]
+    set_fact:
+      borgmatic_consistency: "{{ borgmatic_consistency|default({}) | combine({ (item|replace('borgmatic_consistency_', '')): lookup('vars', item) }) }}"
+    loop: "{{ borgmatic_consistency_vars.split(',') }}"
+  - name: Update global config
+    set_fact:
+      borgmatic_config: "{{ borgmatic_config | combine({ 'consistency': borgmatic_consistency }) }}"
+  when: borgmatic_consistency_vars is string
+- block:
+  - name: Generate borgmatic config [hooks]
+    set_fact:
+      borgmatic_hooks: "{{ borgmatic_hooks|default({}) | combine({ (item|replace('borgmatic_hooks_', '')): lookup('vars', item) }) }}"
+    loop: "{{ borgmatic_hooks_vars.split(',') }}"
+  - name: Update global config
+    set_fact:
+      borgmatic_config: "{{ borgmatic_config | combine({ 'hooks': borgmatic_hooks }) }}"
+  when: borgmatic_hooks_vars is string
+
+- name: Config is installed
+  template:
+    src: config.yaml.j2
+    dest: "{{ borgmatic_config_path }}/config.yaml"
+    owner: root
+    group: root
+    mode: "640"
+
+- name: Initialize repos
+  command: "borgmatic --init --encryption {{ borgmatic_init_encryption }}"
+  when: borgmatic_init_repos
+  tags:
+    molecule-idempotence-notest
