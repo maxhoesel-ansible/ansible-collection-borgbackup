@@ -18,25 +18,43 @@
     password: "*"
     shell: /bin/bash
 
-- name: Borg server dirs are present
+- name: Borg server config dirs are present
   file:
-    path: "{{ item }}"
+    path: "{{ borg_server_config_path }}/.ssh"
     owner: "{{ borg_server_user }}"
     group: "{{ borg_server_user }}"
-    mode: "750"
+    mode: "700"
     state: directory
-  loop:
-    - "{{ borg_server_backups_path }}"
-    - "{{ borg_server_config_path }}/.ssh"
 
-- name: Borg server host backup dirs are present
-  file:
-    path: "{{ borg_server_backups_path }}/{{ item.name }}"
-    owner: "{{ borg_server_user }}"
-    group: "{{ borg_server_user }}"
-    mode: "750"
-    state: directory
-  loop: "{{ borg_server_authorized_hosts }}"
+- block:
+  - name: Borg server backup path is present # noqa risky-file-permissions
+    file:
+      path: "{{ borg_server_backups_path }}"
+      owner: "{{ borg_server_user }}"
+      group: "{{ borg_server_user }}"
+      mode: "700"
+      state: directory
+  - name: Borg server host backup dirs are present # noqa risky-file-permissions
+    file:
+      path: "{{ borg_server_backups_path }}/{{ item.name }}"
+      owner: "{{ borg_server_user }}"
+      group: "{{ borg_server_user }}"
+      mode: "700"
+      state: directory
+    loop: "{{ borg_server_authorized_hosts }}"
+  when: borg_server_backups_set_permissions
+
+- block:
+  - name: Borg server backup path is present # noqa risky-file-permissions
+    file:
+      path: "{{ borg_server_backups_path }}"
+      state: directory
+  - name: Borg server host backup dirs are present # noqa risky-file-permissions
+    file:
+      path: "{{ borg_server_backups_path }}/{{ item.name }}"
+      state: directory
+    loop: "{{ borg_server_authorized_hosts }}"
+  when: not borg_server_backups_set_permissions
 
 - name: authorized_keys is installed
   template:
