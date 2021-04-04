@@ -1,4 +1,13 @@
 
+<a name="v0.1.1"></a>
+## [v0.1.1] - 2021-04-04
+### Documentation
+- link commits in changelog ([3a51665](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/3a51665))
+
+### Features
+- **borg_server:** add backups_set_permissions flag ([#1](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/1)) ([f5c2b91](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/f5c2b91))
+
+
 <a name="v0.1.0"></a>
 ## v0.1.0 - 2021-04-04
 ### Bug Fixes
@@ -8,3 +17,4 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66))
 
 
+[v0.1.1]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.0...v0.1.1
