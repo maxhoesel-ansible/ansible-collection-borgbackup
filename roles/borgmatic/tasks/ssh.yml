@@ -37,7 +37,7 @@
     command: "ssh-keyscan -H {{ (item.split('@').1).split(':').0 }}" # get the actual fqdn from the repo definition
     changed_when: no
     register: borgmatic_ssh_fingerprints
-    loop: "{{ borgmatic_location_repositories | select('match', '.*@.*:.*') }}" # only match remote ssh hosts
+    loop: "{{ borgmatic_location_repositories | select('match', '.*@.*:.*') | list }}" # only match remote ssh hosts
   - name: known_hosts are registered
     include_tasks: ssh_known_hosts.yml
     loop: "{{ borgmatic_ssh_fingerprints.results }}"
