@@ -31,6 +31,12 @@ The server uses these keys to restrict hosts into a single directory where they 
 - Path in which the backups should be saved
 - Default: `/var/borg-server`
 
+##### `borg_server_backups_set_permissions`
+- Whether to set owner/group/mode for the backup directories
+- Should be left on unless you know what you're doing.
+  Disabling this option can be useful, e.g. if you are using an NFS mount as your storage
+- Default: `yes`
+
 ##### `borg_server_authorized_hosts`
 - List of hosts that will have access to the backup server
 - Each entry is a dict containing the host name and its ssh public key
