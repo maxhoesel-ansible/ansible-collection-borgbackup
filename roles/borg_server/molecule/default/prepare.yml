@@ -5,3 +5,16 @@
         name:
           - openssh-server
         update_cache: yes
+
+- hosts: all
+  vars:
+    borg_server_backups_path:
+  tasks:
+    - name: Create backups path # noqa risky-file-permissions
+      file:
+        path: /var/borg-server-molecule
+        state: directory
+    - name: Add a dirty file to the backup directory # noqa risky-file-permissions
+      copy:
+        content: ""
+        dest: "/var/borg-server-molecule/molecule-dirty-file"
