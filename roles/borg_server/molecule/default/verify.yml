@@ -5,7 +5,7 @@
   tasks:
     - name: Look for backup host dir
       stat:
-        path: "/var/borg-server/test-host.localdomain"
+        path: "/var/borg-server-molecule/test-host.localdomain"
       register: borg_server_backup_dir
     - name: Verify that backup dir got created
       assert:
@@ -19,5 +19,13 @@
     - name: Verify that key is present
       assert:
         that:
-          - "'cd /var/borg-server/test-host.localdomain; borg serve --restrict-to-path /var/borg-server/test-host.localdomain' in borg_server_authorized_keys.stdout"
+          - "'cd /var/borg-server-molecule/test-host.localdomain; borg serve --restrict-to-path /var/borg-server-molecule/test-host.localdomain' in borg_server_authorized_keys.stdout"
           - "'restrict ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDyaA8lzdTJ7BCfINstM1IycLC7ghbVEz0reGj8v+s0+/+ltryuUNqrfVqud2vWhWWRsdW5l9c0RKESPEkReqe5qmzfArS1DicDjbS4O8ekhd4p2SgzFSRRm31W0C5KDnusc9f4xGenO4lKZW+AQ5qbQAoFr1l+6HyQU/7GRg0hcSN6obQwURIFj2SjsEav0Vv8BL9KkPG4p85YGiWxaNwsgmrNSx2qQjPFgKYUftF0oV4kCGIF8WdL5rwofGtHuCD7C7+8uKn4x7t6XetP8cti325y7LTlXcxe+OHJen0GhLAu4+u3q+z0uQipbiUMx3KhDDKMdM/kNrEtBkkCp0GQ+9yOT4Th9xK5ICX8LFIPWooCciF1vfNgF7y/UWdxtfX6d1aGqUchlSC1sh2NqvZujc04/3EzNtkZiulFBWLWAxwDMNgprL0OiPpwyGLqJILqizBt4MW7cTd73hZR6kSkmpkTupszWfbfa+g/qS35sMjcxJqzUbpOFE4V9cKeE0= molecule' in borg_server_authorized_keys.stdout"
+
+    - name: Look for dirty file
+      stat:
+        path: /var/borg-server-molecule-molecule/molecule-dirty-file
+      register: borg_server_dirty_file
+    - name: Verify that dirty file got removed
+      assert:
+        that: not borg_server_dirty_file.stat.exists

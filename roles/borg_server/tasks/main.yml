@@ -56,6 +56,21 @@
     loop: "{{ borg_server_authorized_hosts }}"
   when: not borg_server_backups_set_permissions
 
+- block:
+  - name: Get currently present directories and files
+    command: "python3 -c \"import os; import json; print(json.dumps(os.listdir('{{ borg_server_backups_path }}')));\""
+    changed_when: no
+    register: borg_server_backups_current_files
+  - name: Get files and directories to remove
+    set_fact:
+      borg_server_backups_to_remove: "{{ (borg_server_backups_current_files.stdout|from_json) | difference(borg_server_authorized_hosts|map(attribute='name')) }}"
+  - name: Clean directory of external files
+    file:
+      path: "{{ borg_server_backups_path }}/{{ item }}"
+      state: absent
+    loop: "{{ borg_server_backups_to_remove }}"
+  when: borg_server_backups_path_clean
+
 - name: authorized_keys is installed
   template:
     src: authorized_keys.j2

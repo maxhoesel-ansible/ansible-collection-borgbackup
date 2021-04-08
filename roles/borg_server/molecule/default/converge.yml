@@ -6,6 +6,8 @@
       include_role:
         name: "borg_server"
       vars:
+        borg_server_backups_path_clean: yes
+        borg_server_backups_path: /var/borg-server-molecule
         borg_server_authorized_hosts:
           - name: "test-host.localdomain"
             key: "{{ lookup('file', 'files/id_rsa.pub') }}"

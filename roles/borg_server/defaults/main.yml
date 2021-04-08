@@ -6,6 +6,7 @@ borg_server_config_path: /etc/borg-server
 
 borg_server_backups_path: /var/borg-server
 borg_server_backups_set_permissions: yes
+borg_server_backups_path_clean: no
 
 #borg_server_authorized_hosts:
 #  - name: myhost1.my.domain

@@ -11,8 +11,8 @@ platforms:
   #   use systemd functionality. This *should* be possible with unpriliged
   #   containers as well, but is quite the headache.
   # - they are connected to a shared network to allow simulating a remote CA
-  - name: borgmatic-ubuntu-20
-    hostname: borgmatic-ubuntu-20.localdomain
+  - name: borg-server-ubuntu-20
+    hostname: borg-server-ubuntu-20.localdomain
     groups:
       - ubuntu
     image: "geerlingguy/docker-ubuntu2004-ansible"
@@ -22,8 +22,8 @@ platforms:
     override_command: false
     pre_build_image: true
 
-  - name: borgmatic-ubuntu-18
-    hostname: borgmatic-ubuntu-18.localdomain
+  - name: borg-server-ubuntu-18
+    hostname: borg-server-ubuntu-18.localdomain
     groups:
       - ubuntu
     image: "geerlingguy/docker-ubuntu1804-ansible"
@@ -33,8 +33,8 @@ platforms:
     override_command: false
     pre_build_image: true
 
-  - name: borgmatic-debian-10
-    hostname: borgmatic-debian10.localdomain
+  - name: borg-server-debian-10
+    hostname: borg-server-debian10.localdomain
     groups:
       - ubuntu
     image: "geerlingguy/docker-debian10-ansible"
