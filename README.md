@@ -16,7 +16,7 @@ Breaking changes may occur between minor releases (e.g. 0.2 -> 0.3) if needed.
 
 ### Dependencies
 
-- ansible-base, either the most recent version or the release before that
+- A recent version of ansible. We test against the current and previous major release
 - Python 3.6 or newer on remote hosts and the controller
 
 ### Install via ansible-galaxy
