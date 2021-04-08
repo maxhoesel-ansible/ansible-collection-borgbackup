@@ -60,3 +60,4 @@ build_ignore:
     - ".gitlint"
     - ".pre-commit-config.yaml"
     - ".chglog"
+    - ".tox"
