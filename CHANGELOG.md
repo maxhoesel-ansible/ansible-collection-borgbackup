@@ -1,4 +1,10 @@
 
+<a name="v0.1.3"></a>
+## [v0.1.3] - 2021-04-09
+### Bug Fixes
+- prevent errors when removing already absent files ([#4](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/4)) ([b6364b8](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/b6364b8))
+
+
 <a name="v0.1.2"></a>
 ## [v0.1.2] - 2021-04-08
 ### Features
@@ -23,5 +29,6 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66))
 
 
+[v0.1.3]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.0...v0.1.1
