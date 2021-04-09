@@ -65,6 +65,9 @@
     set_fact:
       borg_server_backups_to_remove: "{{ (borg_server_backups_current_files.stdout|from_json) | difference(borg_server_authorized_hosts|map(attribute='name')) }}"
   - name: Clean directory of external files
+    # Safeguard in case the dir is deleted by another process in-between
+    retries: 3
+    delay: 3
     file:
       path: "{{ borg_server_backups_path }}/{{ item }}"
       state: absent
