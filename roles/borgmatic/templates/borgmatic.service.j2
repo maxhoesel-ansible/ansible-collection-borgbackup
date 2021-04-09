@@ -2,7 +2,9 @@
 Description=borgmatic backup
 Wants=network-online.target
 After=network-online.target
+{% if borgmatic_schedule_require_ac_power %}
 ConditionACPower=true
+{% endif %}
 
 [Service]
 Type=oneshot
