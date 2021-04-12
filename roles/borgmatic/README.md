@@ -30,7 +30,7 @@ then optionally sets up a scheduled backup job.
 - Whether to initialize the repositories defined in `borgmatic_location_repositories`
 - Default: `true`
 
-- ##### `borgmatic_init_encryption`
+##### `borgmatic_init_encryption`
 - Encryption mode to use when initializing the repositories
 - Default: `repokey`
 
