@@ -20,5 +20,6 @@
     name: borgmatic.service
     state: started
     no_block: yes
+  when: borgmatic_run_backup
   tags:
     - molecule-idempotence-notest
