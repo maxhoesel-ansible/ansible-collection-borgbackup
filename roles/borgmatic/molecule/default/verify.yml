@@ -10,7 +10,9 @@
     systemd:
       name: 'borgmatic.timer'
       enabled: yes
+      state: started
     register: borgmatic_timer_enabled
+    check_mode: yes
   - name: Verify that timer is enabled
     assert:
       that: not borgmatic_timer_enabled.changed
