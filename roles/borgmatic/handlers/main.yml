@@ -1,0 +1,4 @@
+- name: restart timers target
+  systemd:
+    name: timers.target
+    state: restarted

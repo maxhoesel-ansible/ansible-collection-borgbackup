@@ -14,6 +14,7 @@
     daemon_reload: yes
     name: borgmatic.timer
     enabled: yes
+  notify: restart timers target
 
 - name: Run backup job
   systemd:
