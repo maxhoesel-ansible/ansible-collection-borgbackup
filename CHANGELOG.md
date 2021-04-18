@@ -1,4 +1,17 @@
 
+<a name="v0.1.5"></a>
+## [v0.1.5] - 2021-04-18
+### Bug Fixes
+- **borgmatic:** schedule timer without restarting ([#7](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/7)) ([3fc8681](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/3fc8681))
+- **borgmatic:** only run tasks when required ([#6](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/6)) ([9fc71da](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/9fc71da))
+
+### Documentation
+- fix typo ([bd23ac6](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/bd23ac6))
+
+### Features
+- **borgmatic:** disable hardening and add flag ([#8](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/8)) ([a7fb928](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/a7fb928))
+
+
 <a name="v0.1.4"></a>
 ## [v0.1.4] - 2021-04-09
 ### Bug Fixes
@@ -38,6 +51,7 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66))
 
 
+[v0.1.5]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.4...v0.1.5
 [v0.1.4]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.3...v0.1.4
 [v0.1.3]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.1...v0.1.2
