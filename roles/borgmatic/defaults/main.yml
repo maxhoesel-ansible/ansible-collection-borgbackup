@@ -18,6 +18,7 @@ borgmatic_ssh_known_hosts_file: "{{ borgmatic_config_path }}/known_hosts"
 
 borgmatic_schedule_on: daily
 borgmatic_schedule_max_random_delay: 1800
+borgmatic_schedule_harden: no
 borgmatic_schedule_require_ac_power: no
 borgmatic_schedule_persistent: no
 borgmatic_schedule_wakeup: no
