@@ -68,6 +68,8 @@
   # in between the module executing
   - name: Clean directory of external files # noqa deprecated-command-syntax
     command: rm -rf "{{ borg_server_backups_path }}/{{ item }}"
+    retries: 5
+    delay: 5
     loop: "{{ borg_server_backups_to_remove }}"
   when: borg_server_backups_path_clean
 
