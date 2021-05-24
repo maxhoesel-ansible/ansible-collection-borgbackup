@@ -1,4 +1,10 @@
 
+<a name="v0.1.6"></a>
+## [v0.1.6] - 2021-05-24
+### Bug Fixes
+- **borg_server:** handle removal failures gracefully ([#9](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/9)) ([e0de2ff](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/e0de2ff))
+
+
 <a name="v0.1.5"></a>
 ## [v0.1.5] - 2021-04-18
 ### Bug Fixes
@@ -51,6 +57,7 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66))
 
 
+[v0.1.6]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.5...v0.1.6
 [v0.1.5]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.4...v0.1.5
 [v0.1.4]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.3...v0.1.4
 [v0.1.3]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.2...v0.1.3
