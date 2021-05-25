@@ -16,49 +16,49 @@
 
 # TODO: Use an inner loop to simplify config generation
 - block:
-  - name: Generate borgmatic config [location]
-    set_fact:
-      borgmatic_location: "{{ borgmatic_location|default({}) | combine({ (item|replace('borgmatic_location_', '')): lookup('vars', item) }) }}"
-    loop: "{{ borgmatic_location_vars.split(',') }}"
-  - name: Update global config
-    set_fact:
-      borgmatic_config: "{{ borgmatic_config | combine({ 'location': borgmatic_location }) }}"
+    - name: Generate borgmatic config [location]
+      set_fact:
+        borgmatic_location: "{{ borgmatic_location|default({}) | combine({ (item|replace('borgmatic_location_', '')): lookup('vars', item) }) }}"
+      loop: "{{ borgmatic_location_vars.split(',') }}"
+    - name: Update global config
+      set_fact:
+        borgmatic_config: "{{ borgmatic_config | combine({ 'location': borgmatic_location }) }}"
   when: borgmatic_location_vars is string
 - block:
-  - name: Generate borgmatic config [storage]
-    set_fact:
-      borgmatic_storage: "{{ borgmatic_storage|default({}) | combine({ (item|replace('borgmatic_storage_', '')): lookup('vars', item) }) }}"
-    loop: "{{ borgmatic_storage_vars.split(',') }}"
-  - name: Update global config
-    set_fact:
-      borgmatic_config: "{{ borgmatic_config | combine({ 'storage': borgmatic_storage }) }}"
+    - name: Generate borgmatic config [storage]
+      set_fact:
+        borgmatic_storage: "{{ borgmatic_storage|default({}) | combine({ (item|replace('borgmatic_storage_', '')): lookup('vars', item) }) }}"
+      loop: "{{ borgmatic_storage_vars.split(',') }}"
+    - name: Update global config
+      set_fact:
+        borgmatic_config: "{{ borgmatic_config | combine({ 'storage': borgmatic_storage }) }}"
   when: borgmatic_storage_vars is string
 - block:
-  - name: Generate borgmatic config [retention]
-    set_fact:
-      borgmatic_retention: "{{ borgmatic_retention|default({}) | combine({ (item|replace('borgmatic_retention_', '')): lookup('vars', item) }) }}"
-    loop: "{{ borgmatic_retention_vars.split(',') }}"
-  - name: Update global config
-    set_fact:
-      borgmatic_config: "{{ borgmatic_config | combine({ 'retention': borgmatic_retention }) }}"
+    - name: Generate borgmatic config [retention]
+      set_fact:
+        borgmatic_retention: "{{ borgmatic_retention|default({}) | combine({ (item|replace('borgmatic_retention_', '')): lookup('vars', item) }) }}"
+      loop: "{{ borgmatic_retention_vars.split(',') }}"
+    - name: Update global config
+      set_fact:
+        borgmatic_config: "{{ borgmatic_config | combine({ 'retention': borgmatic_retention }) }}"
   when: borgmatic_retention_vars is string
 - block:
-  - name: Generate borgmatic config [consistency]
-    set_fact:
-      borgmatic_consistency: "{{ borgmatic_consistency|default({}) | combine({ (item|replace('borgmatic_consistency_', '')): lookup('vars', item) }) }}"
-    loop: "{{ borgmatic_consistency_vars.split(',') }}"
-  - name: Update global config
-    set_fact:
-      borgmatic_config: "{{ borgmatic_config | combine({ 'consistency': borgmatic_consistency }) }}"
+    - name: Generate borgmatic config [consistency]
+      set_fact:
+        borgmatic_consistency: "{{ borgmatic_consistency|default({}) | combine({ (item|replace('borgmatic_consistency_', '')): lookup('vars', item) }) }}"
+      loop: "{{ borgmatic_consistency_vars.split(',') }}"
+    - name: Update global config
+      set_fact:
+        borgmatic_config: "{{ borgmatic_config | combine({ 'consistency': borgmatic_consistency }) }}"
   when: borgmatic_consistency_vars is string
 - block:
-  - name: Generate borgmatic config [hooks]
-    set_fact:
-      borgmatic_hooks: "{{ borgmatic_hooks|default({}) | combine({ (item|replace('borgmatic_hooks_', '')): lookup('vars', item) }) }}"
-    loop: "{{ borgmatic_hooks_vars.split(',') }}"
-  - name: Update global config
-    set_fact:
-      borgmatic_config: "{{ borgmatic_config | combine({ 'hooks': borgmatic_hooks }) }}"
+    - name: Generate borgmatic config [hooks]
+      set_fact:
+        borgmatic_hooks: "{{ borgmatic_hooks|default({}) | combine({ (item|replace('borgmatic_hooks_', '')): lookup('vars', item) }) }}"
+      loop: "{{ borgmatic_hooks_vars.split(',') }}"
+    - name: Update global config
+      set_fact:
+        borgmatic_config: "{{ borgmatic_config | combine({ 'hooks': borgmatic_hooks }) }}"
   when: borgmatic_hooks_vars is string
 
 - name: Config is installed
@@ -74,5 +74,3 @@
   register: _borgmatic_init_command
   changed_when: _borgmatic_init_command.stdout | length > 0
   when: borgmatic_init_repos
-  tags:
-    molecule-idempotence-notest

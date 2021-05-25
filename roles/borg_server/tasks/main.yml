@@ -60,6 +60,7 @@
     - name: Get currently present directories and files
       command: 'python3 -c "import os; import json; print(json.dumps(os.listdir(''{{ borg_server_backups_path }}'')));"'
       changed_when: no
+      check_mode: no
       register: borg_server_backups_current_files
     - name: Get files and directories to remove
       set_fact:
