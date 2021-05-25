@@ -11,7 +11,7 @@
   package:
     name: borgbackup
 
-- name: Borg server user is present
+- name: Borg server user is present # noqa no-log-password
   user:
     name: "{{ borg_server_user }}"
     home: "{{ borg_server_config_path }}"
@@ -27,50 +27,50 @@
     state: directory
 
 - block:
-  - name: Borg server backup path is present # noqa risky-file-permissions
-    file:
-      path: "{{ borg_server_backups_path }}"
-      owner: "{{ borg_server_user }}"
-      group: "{{ borg_server_user }}"
-      mode: "700"
-      state: directory
-  - name: Borg server host backup dirs are present # noqa risky-file-permissions
-    file:
-      path: "{{ borg_server_backups_path }}/{{ item.name }}"
-      owner: "{{ borg_server_user }}"
-      group: "{{ borg_server_user }}"
-      mode: "700"
-      state: directory
-    loop: "{{ borg_server_authorized_hosts }}"
+    - name: Borg server backup path is present # noqa risky-file-permissions
+      file:
+        path: "{{ borg_server_backups_path }}"
+        owner: "{{ borg_server_user }}"
+        group: "{{ borg_server_user }}"
+        mode: "700"
+        state: directory
+    - name: Borg server host backup dirs are present # noqa risky-file-permissions
+      file:
+        path: "{{ borg_server_backups_path }}/{{ item.name }}"
+        owner: "{{ borg_server_user }}"
+        group: "{{ borg_server_user }}"
+        mode: "700"
+        state: directory
+      loop: "{{ borg_server_authorized_hosts }}"
   when: borg_server_backups_set_permissions
 
 - block:
-  - name: Borg server backup path is present # noqa risky-file-permissions
-    file:
-      path: "{{ borg_server_backups_path }}"
-      state: directory
-  - name: Borg server host backup dirs are present # noqa risky-file-permissions
-    file:
-      path: "{{ borg_server_backups_path }}/{{ item.name }}"
-      state: directory
-    loop: "{{ borg_server_authorized_hosts }}"
+    - name: Borg server backup path is present # noqa risky-file-permissions
+      file:
+        path: "{{ borg_server_backups_path }}"
+        state: directory
+    - name: Borg server host backup dirs are present # noqa risky-file-permissions
+      file:
+        path: "{{ borg_server_backups_path }}/{{ item.name }}"
+        state: directory
+      loop: "{{ borg_server_authorized_hosts }}"
   when: not borg_server_backups_set_permissions
 
 - block:
-  - name: Get currently present directories and files
-    command: "python3 -c \"import os; import json; print(json.dumps(os.listdir('{{ borg_server_backups_path }}')));\""
-    changed_when: no
-    register: borg_server_backups_current_files
-  - name: Get files and directories to remove
-    set_fact:
-      borg_server_backups_to_remove: "{{ (borg_server_backups_current_files.stdout|from_json) | difference(borg_server_authorized_hosts|map(attribute='name')) }}"
-  # Use rm instead of file to prevent errors when the dir is deleted
-  # in between the module executing
-  - name: Clean directory of external files # noqa deprecated-command-syntax
-    command: rm -rf "{{ borg_server_backups_path }}/{{ item }}"
-    retries: 5
-    delay: 5
-    loop: "{{ borg_server_backups_to_remove }}"
+    - name: Get currently present directories and files
+      command: 'python3 -c "import os; import json; print(json.dumps(os.listdir(''{{ borg_server_backups_path }}'')));"'
+      changed_when: no
+      register: borg_server_backups_current_files
+    - name: Get files and directories to remove
+      set_fact:
+        borg_server_backups_to_remove: "{{ (borg_server_backups_current_files.stdout|from_json) | difference(borg_server_authorized_hosts|map(attribute='name')) }}"
+    # Use rm instead of file to prevent errors when the dir is deleted
+    # in between the module executing
+    - name: Clean directory of external files # noqa deprecated-command-syntax
+      command: rm -rf "{{ borg_server_backups_path }}/{{ item }}"
+      retries: 5
+      delay: 5
+      loop: "{{ borg_server_backups_to_remove }}"
   when: borg_server_backups_path_clean
 
 - name: authorized_keys is installed
