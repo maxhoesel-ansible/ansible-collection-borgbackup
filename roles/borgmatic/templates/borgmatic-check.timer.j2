@@ -1,0 +1,11 @@
+[Unit]
+Description=run borgmatic consistency checks
+
+[Timer]
+OnCalendar={{ borgmatic_schedule_check_job_time }}
+Persistent={{ borgmatic_schedule_persistent }}
+WakeSystem={{ borgmatic_schedule_wakeup }}
+RandomizedDelaySec={{ borgmatic_schedule_max_random_delay }}
+
+[Install]
+WantedBy=timers.target

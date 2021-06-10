@@ -9,12 +9,31 @@
     - borgmatic.service
     - borgmatic.timer
 
+- name: Check timer and service is installed
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: "644"
+  loop:
+    - borgmatic-check.service
+    - borgmatic-check.timer
+  when: borgmatic_schedule_check_job
+
 - name: Systemd timer is enabled
   systemd:
     daemon_reload: yes
     name: borgmatic.timer
     enabled: yes
   notify: restart timers target
+
+- name: Systemd check timer is enabled
+  systemd:
+    daemon_reload: yes
+    name: borgmatic-check.timer
+    enabled: yes
+  when: borgmatic_schedule_check_job
 
 - name: Run backup job
   systemd:

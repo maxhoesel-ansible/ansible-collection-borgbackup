@@ -13,3 +13,19 @@
           - /tmp/myrepo
         borgmatic_storage_encryption_passphrase: molecule-test
         borgmatic_retention_keep_daily: 3
+        borgmatic_schedule_check_job: yes
+        # Don't actually trigger the timer, we run the check job manually
+        borgmatic_schedule_check_job_time: "2099-12-31"
+
+    - name: Wait for backup to finish
+      wait_for:
+        path: "/tmp/myrepo/lock.roster"
+        state: absent
+        timeout: 120
+
+    - name: Manually run check job
+      systemd:
+        name: borgmatic-check
+        state: started
+      tags:
+        - molecule-idempotence-notest
