@@ -23,4 +23,10 @@ borgmatic_schedule_require_ac_power: no
 borgmatic_schedule_persistent: no
 borgmatic_schedule_wakeup: no
 
+borgmatic_schedule_check_job: no
+borgmatic_schedule_check_job_time: "Mon 12:00"
+borgmatic_schedule_check_job_checks:
+  - repository
+  - archives
+
 borgmatic_run_backup: no
