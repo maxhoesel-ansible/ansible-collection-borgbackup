@@ -45,10 +45,15 @@
         loop_var: host
   when: borgmatic_ssh_manage_known_hosts
 
-- block:
-    - name: Generate ssh command
-      set_fact:
-        borgmatic_storage_ssh_command: "ssh{% if borgmatic_ssh_manage_key %} -i {{ borgmatic_ssh_key_path }}{% endif %}{% if borgmatic_ssh_manage_known_hosts %} -o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}{% endif %}"
-  when: >
-    not borgmatic_storage_ssh_command is defined and
-    (borgmatic_ssh_manage_known_hosts or borgmatic_ssh_manage_key)
+# Append the parameters required for custom known_hosts/key to the ssh command, while making sure not to insert any duplicates.
+# Required to preserve compatibility with older versions of this role that asked the user to manually adjust borgmatic_storage_ssh_command
+- name: Generate ssh command
+  set_fact:
+    borgmatic_storage_ssh_command: >
+      {{ borgmatic_storage_ssh_command|d('ssh') }}
+      {% if borgmatic_ssh_manage_key and _borgmatic_ssh_key_string not in borgmatic_storage_ssh_command|d('') %}{{ _borgmatic_ssh_key_string }}{% endif %}
+      {% if borgmatic_ssh_manage_known_hosts and _borgmatic_ssh_known_hosts_string not in borgmatic_storage_ssh_command|d('') %}{{ _borgmatic_ssh_known_hosts_string }}{% endif %}
+  when: borgmatic_ssh_manage_key or borgmatic_ssh_manage_known_hosts
+  vars:
+    _borgmatic_ssh_key_string: " -i {{ borgmatic_ssh_key_path }}"
+    _borgmatic_ssh_known_hosts_string: " -o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}"
