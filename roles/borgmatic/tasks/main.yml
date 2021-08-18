@@ -11,9 +11,12 @@
   when: borgmatic_setup_backup
 
 - include: install.yml
+  when: borgmatic_install
 
 - block:
   - include: ssh.yml
   - include: config.yml
+    when: borgmatic_manage_config
   - include: schedule.yml
+    when: borgmatic_manage_schedule
   when: borgmatic_setup_backup

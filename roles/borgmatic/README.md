@@ -3,7 +3,12 @@
 Install borg+borgmatic and setup a system backup job.
 
 This role installs borg and [borgmatic](https://torsion.org/borgmatic/) (a configuration-driven wrapper around borg),
-then optionally sets up a scheduled backup job.
+then optionally sets up a scheduled backup job. More specifically, this role will:
+
+- Create a custom borgmatic configuration based on simple Ansible variables
+- Manage the SSH client keys and known_hosts file for you
+- Setup a schedule using a systemd timer
+- And more! See the role variables below
 
 ## Requirements
 
@@ -14,33 +19,41 @@ then optionally sets up a scheduled backup job.
 
 ## Role Variables
 
-### General
+### Limit executed Components
 
-##### `borgmatic_setup_backup`
-- Whether to set up a scheduled backup job
-- Set to `false` if you just want to install borg+borgmatic
-- Default: `true`
+To limit execution of this role to specific components, use the variables below.
+By default, all components are executed.
+
+| Variable | Component/Description | Notes |
+|-----------|----------|-------|
+| `borgmatic_install` | Installation of borg + borgmatic |  |
+| `borgmatic_setup_backup` | Configuration of the backup job/environment | Disabling this variable will cause all steps below to be skipped.
+| `borgmatic_init_repos` | Initialization of repositories defined in `borgmatic_location_repositories`, both remote and local
+| `borgmatic_ssh_manage_key` | Management of a client SSH key for borgmatic (see [below](#ssh-management)) |
+| `borgmatic_ssh_manage_known_hosts` | Management of the borgmatic-specific known_hosts file |
+| `borgmatic_manage_config` | Generation of the borgmatic config file |
+| `borgmatic_manage_schedule` | Generation and configuration of the systemd timer + service used for regular backups | Disabling this variable will also disable the check job
+| `borgmatic_schedule_check_job` | Generation of a separate job for running backup repo checks |
+
+### General
 
 ##### `borgmatic_config_path`
 - Path in which the borgmatic config should be saved
 - Only has an effect if `borgmatic_setup_backup` is set to `true`
 - Default: `/etc/borgmatic`
 
-##### `borgmatic_init_repos`
-- Whether to initialize the repositories defined in `borgmatic_location_repositories`
-- Default: `true`
-
 ##### `borgmatic_init_encryption`
 - Encryption mode to use when initializing the repositories
 - Default: `repokey`
 
 ##### `borgmatic_run_backup`
-- Schedule a backup job when this role finished executing
+- Schedule a backup job when this role finishes execution
+- Note that enabling this will cause the role be non-idempotent (it will report changed tasks on every run)
 - Default: `false`
 
 ### SSH Management
 
-If you are saving to a remote host via SSH, this role can manage the client ssh key and known_hosts file for you.
+If you are backing up to a remote host via SSH, this role can manage the client ssh key and known_hosts file for you.
 
 This role always executes backups as the root user, but it uses its own ssh user configuration as to
 not interfere with other processes on the system running as root.
@@ -60,8 +73,7 @@ You can disable this behavior if you want to use the default root ssh settings.
 ##### `borgmatic_ssh_manage_known_hosts`
 - If set to `true`, the role will create and populate a borgmatic-specific known_hosts file with all remote backup server ssh fingerprints
   - Note that the remote servers need to be online for this to function properly
-- If set to `false`, borgmatic will use the default root known_hosts file instead
-- It is recommended to leave this on to prevent connection errors
+- If set to `false`, borgmatic will use the default root known_hosts file instead. This may cause the backup job to fail due to host authentication failures.
 - Default: `true`
 
 ##### `borgmatic_ssh_known_hosts_file`
@@ -71,7 +83,7 @@ You can disable this behavior if you want to use the default root ssh settings.
 
 #### About ssh_command and custom parameters
 
-This role uses borgmatics `ssh_command` setting to pass the required parameters for using a custom key and known_hosts file.
+This role uses borgmatics `ssh_command` (config section: `storage`) setting to pass the required parameters for using a custom key and known_hosts file.
 As such, special care is needed when manually settings this parameter (`borgmatic_storage_ssh_command`).
 If you leave this value undefined, this role will take care of everything for you,
 but if you want to add custom parameters and still use this roles SSH management capabilities, you **must** include the following snippets:
@@ -85,10 +97,12 @@ For example, iff you want to use both the keys and known_hosts management capabi
 
 ### Backup settings
 
+This role supports all borgmatic configuration parameters as variables.
+
 The following settings correspond to the configuration options for [borgmatic](https://torsion.org/borgmatic/docs/reference/configuration/).
 See the official page for more details. These parameters are templated out into the borgmatic config, so borg placeholders and the like should work.
 
-This role supports all borgmatic configuration parameters as variables. With exception of required parameters, *all other parameters are optional and left undefined by default.*. This means that unless you specify them, borgmatic will just use its internal defaults for these values.
+Aside from the required parameters that are passed to this role (see below), *all other parameters are optional and left undefined by default.*. This means that unless you specify them, borgmatic will just use its internal defaults for these values.
 
 The format for variable names is: `borgmatic_{section}_{parameter}`. For example, a borgmatic configuration like this:
 
@@ -178,7 +192,7 @@ Note that the values configured in [Schedule settings](#schedule-settings) will 
     - role: maxhoesel.borgbackup.borgmatic
       become: yes
       vars:
-        # Always Required
+        # Always Required*Most parameters
         borgmatic_location_source_directories:
           - /home
           - /etc
