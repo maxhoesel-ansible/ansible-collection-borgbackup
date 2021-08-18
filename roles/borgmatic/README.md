@@ -122,7 +122,6 @@ The following parameters are either required or need extra attention:
 | `location_repositories` | Paths to target repositories, local or remote | X | undefined |
 | `storage_encryption_passphrase` | Passphrase with which to encrypt the repository | If `borgmatic_init_repos` is set to `true` | undefined
 | `retention_keep_*` | At least one `keep_` parameter is required for retention to work properly | X | undefined
-| `storage_ssh_command` | See the [About ssh_command and custom parameters](#about-ssh-command-and-custom-parameters) section for more details | | undefined if `borgmatic_ssh_manage_key` and `borgmatic_ssh_manage_known_hosts` are false |
 | `consistency_checks` | If you are using the [separate timer for check jobs](#scheduling-the-separate-check-job) due to performance reasons you probably want to set this to `['disabled']` | | undefined |
 
 ### Schedule settings
