@@ -14,6 +14,7 @@ then optionally sets up a scheduled backup job. More specifically, this role wil
 
 - The following distributions are currently supported:
   - Ubuntu 20.04 LTS or newer
+  - Debian 11 or newer
   - There are no plans to support CentOS/RHEL-based distros right now
 - This role requires root access. Make sure to run this role with `become: yes` or equivalent
 
