@@ -1,4 +1,19 @@
 
+<a name="v0.1.7"></a>
+## [v0.1.7] - 2021-08-18
+### Bug Fixes
+- allow roles to run in --check mode once configured ([#12](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/12)) ([8d01dd9](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/8d01dd9))
+- **borgmatic:** be less picky about undefined vars ([#16](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/16)) ([caacd4e](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/caacd4e))
+
+### Documentation
+- **borgmatic:** remove outdated var entry ([1447df3](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/1447df3))
+
+### Features
+- **borgmatic:** add support for debian 11 ([06dfe98](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/06dfe98))
+- **borgmatic:** add execution-limiting variables ([d4e27d0](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/d4e27d0))
+- **borgmatic:** add separate check schedule ([#13](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/13)) ([98e7ebb](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/98e7ebb))
+
+
 <a name="v0.1.6"></a>
 ## [v0.1.6] - 2021-05-24
 ### Bug Fixes
@@ -57,6 +72,7 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66))
 
 
+[v0.1.7]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.6...v0.1.7
 [v0.1.6]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.5...v0.1.6
 [v0.1.5]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.4...v0.1.5
 [v0.1.4]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.3...v0.1.4
