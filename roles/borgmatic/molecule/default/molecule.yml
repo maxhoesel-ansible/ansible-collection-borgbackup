@@ -25,6 +25,18 @@ platforms:
     override_command: false
     pre_build_image: true
 
+  - name: borgmatic-debian-11
+    hostname: borgmatic-debian-11.localdomain
+    groups:
+      - debian
+    image: "geerlingguy/docker-debian11-ansible"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    override_command: false
+    pre_build_image: true
+
+
 provisioner:
   name: ansible
   config_options:
