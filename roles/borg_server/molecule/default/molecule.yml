@@ -33,10 +33,21 @@ platforms:
     override_command: false
     pre_build_image: true
 
+  - name: borg-server-debian-11
+    hostname: borg-server-debian11.localdomain
+    groups:
+      - debian
+    image: "geerlingguy/docker-debian11-ansible"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    override_command: false
+    pre_build_image: true
+
   - name: borg-server-debian-10
     hostname: borg-server-debian10.localdomain
     groups:
-      - ubuntu
+      - debian
     image: "geerlingguy/docker-debian10-ansible"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
