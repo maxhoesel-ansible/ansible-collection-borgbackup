@@ -1,4 +1,13 @@
 
+<a name="v0.1.8"></a>
+## [v0.1.8] - 2021-08-28
+### Bug Fixes
+- **borgmatic:** always update APT cache before installing ([5a67a0b](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/5a67a0b))
+
+### Features
+- **borg_server:** add support for debian 11 ([#18](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/18)) ([8a23df4](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/8a23df4))
+
+
 <a name="v0.1.7"></a>
 ## [v0.1.7] - 2021-08-18
 ### Bug Fixes
@@ -72,6 +81,7 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66))
 
 
+[v0.1.8]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.7...v0.1.8
 [v0.1.7]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.6...v0.1.7
 [v0.1.6]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.5...v0.1.6
 [v0.1.5]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.4...v0.1.5
