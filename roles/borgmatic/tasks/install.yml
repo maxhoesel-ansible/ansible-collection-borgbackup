@@ -3,6 +3,7 @@
     name:
       - borgmatic
       - borgbackup
+    update_cache: yes
 
 - name: Borgmatic config path is present
   file:
