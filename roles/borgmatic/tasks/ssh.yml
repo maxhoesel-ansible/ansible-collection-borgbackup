@@ -49,7 +49,7 @@
 # Required to preserve compatibility with older versions of this role that asked the user to manually adjust borgmatic_storage_ssh_command
 - name: Generate ssh command
   set_fact:
-    borgmatic_storage_ssh_command: >
+    borgmatic_storage_ssh_command: >-
       {{ borgmatic_storage_ssh_command|d('ssh') }}
       {% if borgmatic_ssh_manage_key and _borgmatic_ssh_key_string not in borgmatic_storage_ssh_command|d('') %}{{ _borgmatic_ssh_key_string }}{% endif %}
       {% if borgmatic_ssh_manage_known_hosts and _borgmatic_ssh_known_hosts_string not in borgmatic_storage_ssh_command|d('') %}{{ _borgmatic_ssh_known_hosts_string }}{% endif %}
