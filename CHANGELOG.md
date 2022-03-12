@@ -1,4 +1,16 @@
 
+<a name="v0.1.9"></a>
+## [v0.1.9] - 2022-03-12
+### Bug Fixes
+- **borgmatic:** improve ssh fingerprint reliability ([cf03a99](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/cf03a99)) [Max Hösel]
+- **borgmatic:** remove trailing newline from ssh command ([#20](https://github.com/maxhoesel/ansible-collection-borgbackup/issues/20)) ([c6f39ca](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/c6f39ca)) [Max Hösel]
+
+### Documentation
+- update readme ([a20f56a](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/a20f56a)) [Max Hösel]
+- update contribution docs ([77f804b](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/77f804b)) [Max Hösel]
+- add author names to changelog ([63ec791](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/63ec791)) [Max Hösel]
+
+
 <a name="v0.1.8"></a>
 ## [v0.1.8] - 2021-08-28
 ### Bug Fixes
@@ -81,6 +93,7 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66)) [Max Hösel]
 
 
+[v0.1.9]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.8...v0.1.9
 [v0.1.8]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.7...v0.1.8
 [v0.1.7]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.6...v0.1.7
 [v0.1.6]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.5...v0.1.6
