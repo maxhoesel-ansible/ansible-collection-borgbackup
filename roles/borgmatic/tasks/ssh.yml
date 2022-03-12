@@ -36,13 +36,16 @@
       command: "ssh-keyscan -H {{ (item.split('@').1).split(':').0 }}" # get the actual fqdn from the repo definition
       changed_when: no
       check_mode: no
+      retries: 5
+      delay: 5
       register: borgmatic_ssh_fingerprints
       loop: "{{ borgmatic_location_repositories | select('match', '.*@.*:.*') | list }}" # only match remote ssh hosts
     - name: known_hosts are registered
-      include_tasks: ssh_known_hosts.yml
-      loop: "{{ borgmatic_ssh_fingerprints.results }}"
-      loop_control:
-        loop_var: host
+      known_hosts:
+        name: "{{ (item.0.item.split('@').1).split(':').0 }}"
+        key: "{{ item.1 }}"
+        path: "{{ borgmatic_ssh_known_hosts_file }}"
+      loop: "{{ borgmatic_ssh_fingerprints.results| subelements('stdout_lines') }}"
   when: borgmatic_ssh_manage_known_hosts
 
 # Append the parameters required for custom known_hosts/key to the ssh command, while making sure not to insert any duplicates.

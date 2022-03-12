@@ -1,6 +1,0 @@
-- name: Remote host key is in known_hosts
-  known_hosts:
-    name: "{{ (host.item.split('@').1).split(':').0 }}"
-    key: "{{ item }}"
-    path: "{{ borgmatic_ssh_known_hosts_file }}"
-  loop: "{{ host.stdout_lines }}"
