@@ -4,14 +4,6 @@
 ![CI Status (Roles)](https://img.shields.io/github/workflow/status/maxhoesel/ansible-collection-borgbackup/CI%20Roles/main)
 ![License](https://img.shields.io/github/license/maxhoesel/ansible-collection-borgbackup)
 
----
-**NOTE**
-
-This collection is still under active development and do not have an official stable release yet.
-Breaking changes may occur between minor releases (e.g. 0.2 -> 0.3) if needed.
-
----
-
 ## Installation
 
 ### Dependencies
