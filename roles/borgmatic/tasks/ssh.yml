@@ -46,6 +46,7 @@
         key: "{{ item.1 }}"
         path: "{{ borgmatic_ssh_known_hosts_file }}"
       loop: "{{ borgmatic_ssh_fingerprints.results| subelements('stdout_lines') }}"
+      no_log: yes # reduce log spam a little bit
   when: borgmatic_ssh_manage_known_hosts
 
 # Append the parameters required for custom known_hosts/key to the ssh command, while making sure not to insert any duplicates.
