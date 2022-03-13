@@ -1,4 +1,7 @@
 
+<a name="v0.1.10"></a>
+## [v0.1.10] - 2022-03-13
+
 <a name="v0.1.9"></a>
 ## [v0.1.9] - 2022-03-12
 ### Bug Fixes
@@ -93,6 +96,7 @@
 - initial commit ([0a1df66](https://github.com/maxhoesel/ansible-collection-borgbackup/commit/0a1df66)) [Max Hösel]
 
 
+[v0.1.10]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.9...v0.1.10
 [v0.1.9]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.8...v0.1.9
 [v0.1.8]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.7...v0.1.8
 [v0.1.7]: https://github.com/maxhoesel/ansible-collection-borgbackup/compare/v0.1.6...v0.1.7
