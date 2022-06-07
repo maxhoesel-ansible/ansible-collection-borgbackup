@@ -26,7 +26,8 @@
     mode: "700"
     state: directory
 
-- block:
+- name: Create directories for backup targetes (/w permissions)
+  block:
     - name: Borg server backup path is present # noqa risky-file-permissions
       file:
         path: "{{ borg_server_backups_path }}"
@@ -44,7 +45,8 @@
       loop: "{{ borg_server_authorized_hosts }}"
   when: borg_server_backups_set_permissions
 
-- block:
+- name: Create directories for backup targetes (/w.o. permissions)
+  block:
     - name: Borg server backup path is present # noqa risky-file-permissions
       file:
         path: "{{ borg_server_backups_path }}"
@@ -56,7 +58,8 @@
       loop: "{{ borg_server_authorized_hosts }}"
   when: not borg_server_backups_set_permissions
 
-- block:
+- name: Clear up old hosts
+  block:
     - name: Get currently present directories and files
       command: 'python3 -c "import os; import json; print(json.dumps(os.listdir(''{{ borg_server_backups_path }}'')));"'
       changed_when: no
