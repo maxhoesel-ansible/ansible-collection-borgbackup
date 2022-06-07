@@ -15,7 +15,7 @@
       - borgmatic_retention_keeps | length > 0
 
 # TODO: Use an inner loop to simplify config generation
-- block:
+- block: # noqa unnamed-task
     - name: Generate borgmatic config [location]
       set_fact:
         borgmatic_location: "{{ borgmatic_location|default({}) | combine({ (item|replace('borgmatic_location_', '')): lookup('vars', item) }) }}"
@@ -24,7 +24,7 @@
       set_fact:
         borgmatic_config: "{{ borgmatic_config | combine({ 'location': borgmatic_location }) }}"
   when: borgmatic_location_vars is string
-- block:
+- block: # noqa unnamed-task
     - name: Generate borgmatic config [storage]
       set_fact:
         borgmatic_storage: "{{ borgmatic_storage|default({}) | combine({ (item|replace('borgmatic_storage_', '')): lookup('vars', item) }) }}"
@@ -33,7 +33,7 @@
       set_fact:
         borgmatic_config: "{{ borgmatic_config | combine({ 'storage': borgmatic_storage }) }}"
   when: borgmatic_storage_vars is string
-- block:
+- block: # noqa unnamed-task
     - name: Generate borgmatic config [retention]
       set_fact:
         borgmatic_retention: "{{ borgmatic_retention|default({}) | combine({ (item|replace('borgmatic_retention_', '')): lookup('vars', item) }) }}"
@@ -42,7 +42,7 @@
       set_fact:
         borgmatic_config: "{{ borgmatic_config | combine({ 'retention': borgmatic_retention }) }}"
   when: borgmatic_retention_vars is string
-- block:
+- block: # noqa unnamed-task
     - name: Generate borgmatic config [consistency]
       set_fact:
         borgmatic_consistency: "{{ borgmatic_consistency|default({}) | combine({ (item|replace('borgmatic_consistency_', '')): lookup('vars', item) }) }}"
@@ -51,7 +51,7 @@
       set_fact:
         borgmatic_config: "{{ borgmatic_config | combine({ 'consistency': borgmatic_consistency }) }}"
   when: borgmatic_consistency_vars is string
-- block:
+- block: # noqa unnamed-task
     - name: Generate borgmatic config [hooks]
       set_fact:
         borgmatic_hooks: "{{ borgmatic_hooks|default({}) | combine({ (item|replace('borgmatic_hooks_', '')): lookup('vars', item) }) }}"

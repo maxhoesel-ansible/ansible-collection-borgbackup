@@ -1,4 +1,4 @@
-- block:
+- block: # noqa unnamed-task
     - name: Verify that ssh_key_path is present in custom ssh_command
       assert:
         that: "'-i ' + borgmatic_ssh_key_path in borgmatic_storage_ssh_command"
@@ -17,7 +17,7 @@
       when: not borgmatic_ssh_keys_current.stat.exists
   when: borgmatic_ssh_manage_key
 
-- block:
+- block: # noqa unnamed-task
     - name: Verify that ssh_known_hosts_file is present in custom ssh_command
       assert:
         that: "'-o UserKnownHostsFile=' + borgmatic_ssh_known_hosts_file in borgmatic_storage_ssh_command"

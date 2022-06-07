@@ -10,13 +10,16 @@
       - borgmatic_location_repositories | length > 0
   when: borgmatic_manage_config
 
-- include: install.yml
+- ansible.builtin.include_tasks: install.yml
   when: borgmatic_install
 
-- block:
-  - include: ssh.yml
-  - include: config.yml
+- block: # noqa unnamed-task
+  - name: Configure SSH
+    ansible.builtin.include_tasks: ssh.yml
+  - name: Generate Borgmatic Config
+    ansible.builtin.include_tasks: config.yml
     when: borgmatic_manage_config
-  - include: schedule.yml
+  - name: Create Schedule
+    ansible.builtin.include_tasks: schedule.yml
     when: borgmatic_manage_schedule
   when: borgmatic_setup_backup
