@@ -67,7 +67,7 @@
       register: borg_server_backups_current_files
     - name: Get files and directories to remove
       set_fact:
-        borg_server_backups_to_remove: "{{ (borg_server_backups_current_files.stdout|from_json) | difference(borg_server_authorized_hosts|map(attribute='name')) }}"
+        borg_server_backups_to_remove: "{{ ( borg_server_backups_current_files.stdout | from_json ) | difference( borg_server_authorized_hosts | map(attribute='name')) }}"
     # Use rm instead of file to prevent errors when the dir is deleted
     # in between the module executing
     - name: Clean directory of external files # noqa deprecated-command-syntax no-changed-when

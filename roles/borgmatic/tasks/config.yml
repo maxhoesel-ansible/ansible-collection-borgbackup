@@ -18,7 +18,7 @@
 - block: # noqa unnamed-task
     - name: Generate borgmatic config [location]
       set_fact:
-        borgmatic_location: "{{ borgmatic_location|default({}) | combine({ (item|replace('borgmatic_location_', '')): lookup('vars', item) }) }}"
+        borgmatic_location: "{{ borgmatic_location | default({}) | combine({ ( item | replace('borgmatic_location_', '')): lookup('vars', item) }) }}"
       loop: "{{ borgmatic_location_vars.split(',') }}"
     - name: Update global config
       set_fact:
@@ -27,7 +27,7 @@
 - block: # noqa unnamed-task
     - name: Generate borgmatic config [storage]
       set_fact:
-        borgmatic_storage: "{{ borgmatic_storage|default({}) | combine({ (item|replace('borgmatic_storage_', '')): lookup('vars', item) }) }}"
+        borgmatic_storage: "{{ borgmatic_storage | default({}) | combine({ ( item | replace('borgmatic_storage_', '')): lookup('vars', item) }) }}"
       loop: "{{ borgmatic_storage_vars.split(',') }}"
     - name: Update global config
       set_fact:
@@ -36,7 +36,7 @@
 - block: # noqa unnamed-task
     - name: Generate borgmatic config [retention]
       set_fact:
-        borgmatic_retention: "{{ borgmatic_retention|default({}) | combine({ (item|replace('borgmatic_retention_', '')): lookup('vars', item) }) }}"
+        borgmatic_retention: "{{ borgmatic_retention | default({}) | combine({ ( item | replace('borgmatic_retention_', '')): lookup('vars', item) }) }}"
       loop: "{{ borgmatic_retention_vars.split(',') }}"
     - name: Update global config
       set_fact:
@@ -45,7 +45,7 @@
 - block: # noqa unnamed-task
     - name: Generate borgmatic config [consistency]
       set_fact:
-        borgmatic_consistency: "{{ borgmatic_consistency|default({}) | combine({ (item|replace('borgmatic_consistency_', '')): lookup('vars', item) }) }}"
+        borgmatic_consistency: "{{ borgmatic_consistency | default({}) | combine({ ( item | replace('borgmatic_consistency_', '')): lookup('vars', item) }) }}"
       loop: "{{ borgmatic_consistency_vars.split(',') }}"
     - name: Update global config
       set_fact:
@@ -54,7 +54,7 @@
 - block: # noqa unnamed-task
     - name: Generate borgmatic config [hooks]
       set_fact:
-        borgmatic_hooks: "{{ borgmatic_hooks|default({}) | combine({ (item|replace('borgmatic_hooks_', '')): lookup('vars', item) }) }}"
+        borgmatic_hooks: "{{ borgmatic_hooks | default({}) | combine({ ( item | replace('borgmatic_hooks_', '')): lookup('vars', item) }) }}"
       loop: "{{ borgmatic_hooks_vars.split(',') }}"
     - name: Update global config
       set_fact:
