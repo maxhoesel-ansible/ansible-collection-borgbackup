@@ -32,7 +32,7 @@
         state: started
     - name: Generate hosts keys list
       set_fact:
-        borg_server_authorized_hosts: "{{ (borg_server_authorized_hosts|default([])) + [hostvars[item]['borg_server_host_entry']] }}"
+        borg_server_authorized_hosts: "{{ ( borg_server_authorized_hosts | default([]) ) + [hostvars[item]['borg_server_host_entry']] }}"
       loop: "{{ groups['clients'] }}"
     - name: Install borg server
       include_role:
