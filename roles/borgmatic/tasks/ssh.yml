@@ -38,6 +38,7 @@
       check_mode: no
       retries: 5
       delay: 5
+      until: borgmatic_ssh_fingerprints.rc == 0
       register: borgmatic_ssh_fingerprints
       loop: "{{ borgmatic_location_repositories | select('match', '.*@.*:.*') | list }}" # only match remote ssh hosts
     - name: known_hosts are registered
