@@ -1,4 +1,20 @@
-# Borgmatic main configuration file
-# Managed by Ansible - do not modify
+#jinja2: trim_blocks: False
 
-{{ borgmatic_config | to_nice_yaml(indent=2, width=120) }}
+# Borgmatic main configuration file
+# {{ ansible_managed }}
+
+{%- set config = {} %}
+{%- for section in borgmatic_config_sections %}
+    {%- set section_cfg = {} %}
+    {%- for entry in _borgmatic_configvars %}
+        {%- if entry is match('^borgmatic_' + section + '_') %}
+            {%- set entry_name = entry.replace('borgmatic_' + section + '_', '') %}
+            {#- Really nasty way to update a dict in jinja, but i don't know of a cleaner way to accomplish this #}
+            {%- set _ = section_cfg.update({entry_name: _borgmatic_configvars[entry]}) %}
+        {%- endif %}
+    {%- endfor %}
+    {%- if section_cfg | length > 0 %}
+        {%- set _ = config.update({section: section_cfg}) %}
+    {%- endif %}
+{%- endfor %}
+{{ config | to_nice_yaml(indent=2, width=120) }}
