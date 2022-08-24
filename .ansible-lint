@@ -7,3 +7,7 @@ exclude_paths:
 
 skip_list:
   - 'fqcn-builtins'
+  - 'name[casing]'
+
+warn_list:
+  - 'jinja[spacing]'
