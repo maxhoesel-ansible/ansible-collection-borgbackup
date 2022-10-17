@@ -6,9 +6,6 @@ dependency:
     role-file: molecule/default/collections/requirements.yml
 driver:
   name: docker
-  network:
-    - name: borgmatic
-      driver: bridge
 platforms:
   # Note on containers:
   # - We use the images provided by geerlingguy, as they provide out-of-the-box
@@ -30,6 +27,8 @@ platforms:
     pre_build_image: true
     networks:
       - name: borgmatic
+    docker_networks:
+      - name: borgmatic
 
   - name: borgmatic-ubuntu-20
     hostname: borgmatic-ubuntu-20.localdomain
@@ -44,6 +43,8 @@ platforms:
     pre_build_image: true
     networks:
       - name: borgmatic
+    docker_networks:
+      - name: borgmatic
 
   - name: borgmatic-debian-11
     hostname: borgmatic-debian-11.localdomain
@@ -57,6 +58,8 @@ platforms:
     override_command: false
     pre_build_image: true
     networks:
+      - name: borgmatic
+    docker_networks:
       - name: borgmatic
 
 provisioner:
