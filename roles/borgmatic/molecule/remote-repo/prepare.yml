@@ -18,7 +18,7 @@
     - name: Generate host entry
       set_fact:
         borg_server_host_entry:
-          name: "{{ ansible_fqdn }}"
+          name: "{{ ansible_hostname }}"
           key: "{{ borgmatic_host_key.stdout }}"
 
 - hosts: servers
@@ -34,6 +34,10 @@
       set_fact:
         borg_server_authorized_hosts: "{{ (borg_server_authorized_hosts | default([])) + [hostvars[item]['borg_server_host_entry']] }}"
       loop: "{{ groups['clients'] }}"
+
+    # Use the borg server_role to install a backup server.
+    # Ideally we'd use some externally-prepared docker container like
+    # https://github.com/grantbevis/borg-server instead, to prevent depending on our own collection.
     - name: Install borg server
       include_role:
         name: borg_server
