@@ -25,8 +25,9 @@ workflows:
   ci:
     jobs:
       - collection-testing/pre-commit-lint
-      - collection-testing/antsibull-docs:
-          collection-name: maxhoesel.smallstep
+      # Uncomment whenever we have modules
+      #- collection-testing/antsibull-docs:
+      #    collection-name: maxhoesel.borgbackup
       - collection-testing/tox-role-scenarios:
           parallelism: 15
           resource-class: large
