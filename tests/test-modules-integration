@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# shellcheck disable=1091
+source "$SCRIPT_DIRECTORY/constants.sh"
+
+# Uncomment whenever modules are added
+#tox -e integration -- \
+#    --docker --color -v \
+#    --controller docker:default \
+#    --target "docker:default,python=$PYTHON_VERSION"

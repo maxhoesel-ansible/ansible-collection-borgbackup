@@ -1,8 +1,8 @@
 # maxhoesel.borgbackup
 
-![Release](https://img.shields.io/github/v/release/maxhoesel/ansible-collection-borgbackup)
-![CI Status (Roles)](https://img.shields.io/github/workflow/status/maxhoesel/ansible-collection-borgbackup/CI%20Roles/main)
-![License](https://img.shields.io/github/license/maxhoesel/ansible-collection-borgbackup)
+![Release](https://img.shields.io/github/v/release/maxhoesel/ansible-collection-borgbackup?style=flat-square)
+![Build Status](https://img.shields.io/circleci/build/github/maxhoesel-ansible/ansible-collection-borgbackup/main?style=flat-square)
+![License](https://img.shields.io/github/license/maxhoesel/ansible-collection-borgbackup?style=flat-square)
 
 ## Installation
 
