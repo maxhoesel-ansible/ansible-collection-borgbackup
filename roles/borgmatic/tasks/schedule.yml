@@ -21,18 +21,19 @@
     - borgmatic-check.timer
   when: borgmatic_schedule_check_job
 
-- name: Systemd timer is enabled
+- name: Systemd timer is enabled and running
   systemd:
     daemon_reload: yes
     name: borgmatic.timer
     enabled: yes
-  notify: restart timers target
+    state: started
 
-- name: Systemd check timer is enabled
+- name: Systemd check timer is enabled and running
   systemd:
     daemon_reload: yes
     name: borgmatic-check.timer
     enabled: yes
+    state: started
   when: borgmatic_schedule_check_job
 
 - name: Run backup job

@@ -5,67 +5,59 @@ dependency:
     requirements-file: molecule/default/collections/requirements.yml
     role-file: molecule/default/collections/requirements.yml
 driver:
-  name: docker
+  name: podman
 platforms:
-  # Note on containers:
-  # - We use the images provided by geerlingguy, as they provide out-of-the-box
-  #   support for Ansible and systemd (needed to test service management).
-  # - The containers run as privileged containers so that we can
-  #   use systemd functionality. This *should* be possible with unpriliged
-  #   containers as well, but is quite the headache.
-  # - they are connected to a shared network to allow simulating a remote CA
-  - name: borgmatic-server
-    hostname: borgmatic-server.localdomain
-    groups:
-      - ubuntu
-      - servers
-    image: "geerlingguy/docker-ubuntu2004-ansible"
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
-    override_command: false
-    pre_build_image: true
-    networks:
-      - name: borgmatic
-    docker_networks:
-      - name: borgmatic
-
-  - name: borgmatic-ubuntu-20
-    hostname: borgmatic-ubuntu-20.localdomain
+  # We use the images provided by geerlingguy where possible, as they provide out-of-the-box
+  # support for Ansible (pre_build_image=true, speeds up testing).
+  - name: borgmatic-ubuntu-22
     groups:
       - ubuntu
       - clients
-    image: "geerlingguy/docker-ubuntu2004-ansible"
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
+    image: "docker.io/geerlingguy/docker-ubuntu2204-ansible"
     override_command: false
     pre_build_image: true
-    networks:
-      - name: borgmatic
-    docker_networks:
-      - name: borgmatic
+    systemd: always
+    network: molecule-borgmatic
+
+  - name: borgmatic-ubuntu-20
+    groups:
+      - ubuntu
+      - clients
+    image: "docker.io/geerlingguy/docker-ubuntu2004-ansible"
+    override_command: false
+    pre_build_image: true
+    systemd: always
+    network: molecule-borgmatic
 
   - name: borgmatic-debian-11
-    hostname: borgmatic-debian-11.localdomain
     groups:
       - debian
       - clients
-    image: "geerlingguy/docker-debian11-ansible"
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
+    image: "docker.io/geerlingguy/docker-debian11-ansible"
     override_command: false
     pre_build_image: true
-    networks:
-      - name: borgmatic
-    docker_networks:
-      - name: borgmatic
+    systemd: always
+    network: molecule-borgmatic
+
+  # We use the borg server_role to install a backup server.
+  # Ideally we'd use some externally-prepared docker container like
+  # https://github.com/grantbevis/borg-server instead, to prevent depending on our own collection.
+  - name: borgmatic-server
+    groups:
+      - ubuntu
+      - servers
+    image: "docker.io/geerlingguy/docker-ubuntu2004-ansible"
+    override_command: false
+    pre_build_image: true
+    systemd: always
+    network: molecule-borgmatic
 
 provisioner:
   name: ansible
   env:
-    ANSIBLE_PIPELINING: "True"
+    # This is required for podman to function: https://github.com/ansible-community/molecule-podman/issues/2
+    ANSIBLE_PIPELINING: false
+    #ANSIBLE_VERBOSITY: 3 # enable for debugging
 
 scenario:
   test_sequence:
