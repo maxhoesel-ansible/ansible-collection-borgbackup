@@ -28,7 +28,7 @@ run() {
         --color -v \
         --controller docker:default --target "docker:default,python=$PYTHON_VERSION" \
         --docker-network $BORG_PODMAN_NETWORK  \
-        --docker-terminate=always `#Change this if you want to debug test targets`
+        --docker-terminate=always #Change this if you want to debug test targets
 }
 
 main() {
