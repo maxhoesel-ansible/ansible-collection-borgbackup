@@ -15,6 +15,7 @@ platforms:
     image: "docker.io/geerlingguy/docker-ubuntu2204-ansible"
     override_command: false
     pre_build_image: true
+    systemd: always
 
   - name: borgmatic-ubuntu-20
     groups:
@@ -22,6 +23,7 @@ platforms:
     image: "docker.io/geerlingguy/docker-ubuntu2004-ansible"
     override_command: false
     pre_build_image: true
+    systemd: always
 
   - name: borgmatic-debian-11
     groups:
@@ -29,6 +31,7 @@ platforms:
     image: "docker.io/geerlingguy/docker-debian11-ansible"
     override_command: false
     pre_build_image: true
+    systemd: always
 
 provisioner:
   name: ansible
