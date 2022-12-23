@@ -41,7 +41,7 @@ workflows:
           filters: *tagged
           requires:
             - collection-testing/tox-role-scenarios
-            - collection-testing/antsibull-docs
+            #- collection-testing/antsibull-docs
             #- modules-sanity
             #- modules-integration
       - collection-testing/publish-galaxy:
@@ -49,7 +49,7 @@ workflows:
           filters: *tagged
           requires:
             - collection-testing/tox-role-scenarios
-            - collection-testing/antsibull-docs
+            #- collection-testing/antsibull-docs
             #- modules-sanity
             #- modules-integration
       #- modules-sanity
