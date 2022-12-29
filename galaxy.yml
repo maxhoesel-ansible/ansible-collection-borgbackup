@@ -18,6 +18,8 @@ build_ignore:
 - scripts
 - requirements.txt
 - requirements-molecule.txt
+- '**/requirements-molecule.txt'
+- '**/requirements.txt'
 dependencies: {}
 description: Roles and modules related to setting up borgbackup and borgmatic software
 documentation: https://github.com/maxhoesel-ansibleansible-collection-borg
