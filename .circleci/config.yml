@@ -4,6 +4,14 @@ orbs:
   collection-testing: maxhoesel-ansible/ansible-collection-testing@0.3.5
 
 jobs:
+  build-install:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - collection-testing/install-requirements-txt:
+          file: requirements.txt
+      - collection-testing/build-install-collection
   modules-sanity:
     executor: collection-testing/default
     steps:
@@ -31,6 +39,7 @@ filters: &tagged
 workflows:
   ci:
     jobs:
+      - build-install
       - collection-testing/pre-commit-lint
       #- collection-testing/antsibull-docs
       - collection-testing/tox-role-scenarios:
