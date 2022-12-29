@@ -1,12 +1,23 @@
 authors:
 - Max Hösel <ansible@maxhoesel.de>
 build_ignore:
+- .circleci
+- .github
+- tests
+- CODE_OF_CONDUCT.md
+- CONTRIBUTING.md
+- pyproject.toml
+- tox.ini
+- .yamllint
+- .ansible-lint
+- .pre-commit-config.yaml
 - '*.tar.gz'
 - .venv
-- .github
 - .tox
 - .pytest_cache
 - scripts
+- requirements.txt
+- requirements-molecule.txt
 dependencies: {}
 description: Roles and modules related to setting up borgbackup and borgmatic software
 documentation: https://github.com/maxhoesel-ansibleansible-collection-borg
