@@ -51,6 +51,9 @@ platforms:
     pre_build_image: true
     systemd: always
     network: molecule-borgmatic
+    # Needed for SSHd to work in newer podman versions apparently
+    capabilities:
+      - SYS_CHROOT
 
 provisioner:
   name: ansible
