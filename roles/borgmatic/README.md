@@ -17,6 +17,7 @@ then optionally sets up a scheduled backup job. More specifically, this role wil
   - Debian 11 or newer
   - There are no plans to support CentOS/RHEL-based distros right now
 - This role requires root access. Make sure to run this role with `become: yes` or equivalent
+- Supported Borgmatic versions: 1.5 and up
 
 ## Role Variables
 
@@ -122,7 +123,6 @@ The following parameters are either required or need extra attention:
 | `location_repositories` | Paths to target repositories, local or remote | X | undefined |
 | `storage_encryption_passphrase` | Passphrase with which to encrypt the repository | If `borgmatic_init_repos` is set to `true` | undefined
 | `retention_keep_*` | At least one `keep_` parameter is required for retention to work properly | X | undefined
-| `consistency_checks` | If you are using the [separate timer for check jobs](#scheduling-the-separate-check-job) due to performance reasons you probably want to set this to `['disabled']` | | undefined |
 
 ### Schedule settings
 
@@ -140,12 +140,14 @@ The prefix for all variables in this section is: `borgmatic_schedule_`
 | `wakeup` | Whether to wake the system for the backup job if it is in standby. May or may not be supported | | `false` |
 
 
-### Scheduling The Separate Check Job
+### Scheduling A Separate Check Job
 
 On larger repositories, checks may take a very long time to complete.
-This role can setup a separate check timer that runs independently of the backup job if you want to avoid your backups taking much longer than needed.
+If you do not want your checks to run on every backup, there are two options:
 
-The timer job can be configured to perform one or more of the following actions: `repository`, `archives`, `data` (implies archive), `extract`.
+For borgmatic 1.6.2 and newer, you can use the "Check Frequency" feature described [here](https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency). This method is preferred if possible as it prevents conflicts and only requires a few configuration parameters.
+For older borgmatic versions, you can use this roles capability to setup a separate check job described below.
+This check job can be configured to perform one or more of the following actions: `repository`, `archives`, `data` (implies archive), `extract`.
 Please see the [borg documentation](https://borgbackup.readthedocs.io/en/stable/usage/check.html) for more information about these options.
 
 ---

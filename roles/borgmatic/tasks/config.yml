@@ -14,7 +14,7 @@
     mode: "640"
 
 - name: Initialize repos
-  command: "borgmatic --init --encryption {{ borgmatic_init_encryption }}"
+  command: "borgmatic init --encryption {{ borgmatic_init_encryption }}"
   register: _borgmatic_init_command
   changed_when: _borgmatic_init_command.stdout | length > 0
   when: borgmatic_init_repos
