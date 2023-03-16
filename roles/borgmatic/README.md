@@ -17,6 +17,7 @@ then optionally sets up a scheduled backup job. More specifically, this role wil
   - Debian 11 or newer
   - There are no plans to support CentOS/RHEL-based distros right now
 - This role requires root access. Make sure to run this role with `become: yes` or equivalent
+- Supported Borgmatic versions: 1.5 and up
 
 ## Role Variables
 
