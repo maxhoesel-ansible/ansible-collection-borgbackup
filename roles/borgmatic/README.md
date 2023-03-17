@@ -132,7 +132,7 @@ Note that these values (except for `backup_time`) also affect the separate check
 The prefix for all variables in this section is: `borgmatic_schedule_`
 | Name | Description | Required | Default |
 |------|-------------|:--------:|---------|
-| `backup_time` | Schedule at which the backup should be run. Can be any valid [systemd time expression](https://www.freedesktop.org/software/systemd/man/systemd.time.html#). | X | `daily` |
+| `on` | Schedule at which the backup should be run. Can be any valid [systemd time expression](https://www.freedesktop.org/software/systemd/man/systemd.time.html#). | X | `daily` |
 | `max_random_delay` | To prevent several hosts pegging your backup server at once, systemd can delay execution within a random period. This balances the load out over a longer time period and helps to prevent load spikes. You can set the maximum delay in seconds with this variable | | `1800` (30 minutes) |
 | `require_ac_power` | If set to `true`, skip the backup when the host is not connected to AC power. | | `false` |
 | `harden` | Whether to tighten security on the systemd service to prevent exploits as root. Can cause issues with hooks and other integrations | | `false` |
