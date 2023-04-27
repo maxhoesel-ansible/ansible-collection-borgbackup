@@ -58,7 +58,7 @@ To run tests, use the wrapper scripts in the `tests` directory from the collecti
     - [`test-modules-sanity`](./tests/test-modules-sanity) performs basic syntax and validation checks
     - [`test-modules-integration`]((./tests/test-modules-integration)) runs the module integration [test targets](./tests/integration/targets/).
 - [`./tests/test-roles`](./tests/test-roles) will use `molecule` to run tests on all roles in the collection (this might take a long time!)
-    - To limit the scope to a single role, add a filter parameter: `./tests/test-roles step_cli`
+    - To limit the scope to a single role, add a filter parameter: `./tests/test-roles borg_server`
     - Alternatively, you can use `tox -l` to list all available scenarios and then select a single one with `tox -e <scenario-name-here>`
 
 ### Setting up Podman
