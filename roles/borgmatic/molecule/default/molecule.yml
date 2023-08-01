@@ -1,14 +1,5 @@
 ---
-dependency:
-  name: galaxy
-  options:
-    requirements-file: molecule/default/collections/requirements.yml
-    role-file: molecule/default/collections/requirements.yml
-driver:
-  name: podman
 platforms:
-  # We use the images provided by geerlingguy where possible, as they provide out-of-the-box
-  # support for Ansible (pre_build_image=true, speeds up testing).
   - name: borgmatic-ubuntu-22
     groups:
       - ubuntu
@@ -34,26 +25,5 @@ platforms:
     systemd: always
 
 provisioner:
-  name: ansible
-  env:
-    # This is required for podman to function: https://github.com/ansible-community/molecule-podman/issues/2
-    ANSIBLE_PIPELINING: false
-    #ANSIBLE_VERBOSITY: 3 # enable for debugging
-
-scenario:
-  test_sequence:
-    - lint
-    - destroy
-    - dependency
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - check # also run check mode in regular tests
-    - side_effect
-    - verify
-    - destroy
-
-verifier:
-  name: ansible
+  playbooks:
+    verify: ../verify.yml
