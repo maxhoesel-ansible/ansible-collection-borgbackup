@@ -16,6 +16,14 @@ platforms:
     pre_build_image: true
     systemd: always
 
+  - name: borgmatic-debian-12
+    groups:
+      - debian
+    image: "docker.io/geerlingguy/docker-debian12-ansible"
+    override_command: false
+    pre_build_image: true
+    systemd: always
+
   - name: borgmatic-debian-11
     groups:
       - debian

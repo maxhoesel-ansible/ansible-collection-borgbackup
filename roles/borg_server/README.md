@@ -9,8 +9,8 @@ The server uses these keys to restrict hosts into a single directory where they 
 ## Requirements
 
 - The following distributions are currently supported:
-  - Ubuntu 18.04 LTS or newer
-  - Debian 10 or newer
+  - Ubuntu: 20.04 LTS, 22.04 LTS
+  - Debian: 10, 11, 12
   - There are no plans to support CentOS/RHEL-based distros right now
 - This role requires root access. Make sure to run this role with `become: yes` or equivalent
 
