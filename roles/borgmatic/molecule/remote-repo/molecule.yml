@@ -20,6 +20,16 @@ platforms:
     systemd: always
     network: molecule-borgmatic
 
+  - name: borgmatic-debian-12
+    groups:
+      - debian
+      - clients
+    image: "docker.io/geerlingguy/docker-debian12-ansible"
+    override_command: false
+    pre_build_image: true
+    systemd: always
+    network: molecule-borgmatic
+
   - name: borgmatic-debian-11
     groups:
       - debian

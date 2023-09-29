@@ -16,10 +16,10 @@ platforms:
     pre_build_image: true
     systemd: always
 
-  - name: borg-server-ubuntu-18
+  - name: borg-server-debian-12
     groups:
-      - ubuntu
-    image: "docker.io/geerlingguy/docker-ubuntu1804-ansible"
+      - debian
+    image: "docker.io/geerlingguy/docker-debian12-ansible"
     override_command: false
     pre_build_image: true
     systemd: always
