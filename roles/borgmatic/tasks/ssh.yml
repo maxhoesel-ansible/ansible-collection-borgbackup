@@ -46,7 +46,7 @@
         name: "{{ (item.0.item.split('@').1).split(':').0 }}"
         key: "{{ item.1 }}"
         path: "{{ borgmatic_ssh_known_hosts_file }}"
-      loop: "{{ borgmatic_ssh_fingerprints.results | subelements('stdout_lines') }}"
+      loop: "{{ borgmatic_ssh_fingerprints.results | d([]) | subelements('stdout_lines', skip_missing=true) }}"
       no_log: yes # reduce log spam a little bit
   when: borgmatic_ssh_manage_known_hosts
 
