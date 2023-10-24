@@ -17,37 +17,10 @@
       when: not borgmatic_ssh_keys_current.stat.exists
   when: borgmatic_ssh_manage_key
 
-- block: # noqa unnamed-task
-    - name: Verify that ssh_known_hosts_file is present in custom ssh_command
-      assert:
-        that: "'-o UserKnownHostsFile=' + borgmatic_ssh_known_hosts_file in borgmatic_storage_ssh_command"
-        fail_msg: >
-          custom_ssh_command does not include ssh_known_hosts_file and ssh_manage_key is enabled.
-          To use the ssh key management capabilities of this role, please add this to your custom
-          ssh command: "-o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}"
-      when: borgmatic_storage_ssh_command is defined
-
-    # ssh-keyscan returns a multiline string, with each line containing one known_hosts entry
-    # We call the known_hosts task once for each remote host, with the task itself
-    # then splitting the lines into individual entries that ansible.builtin.known_hosts
-    # can understand. I'm sure there is an easier way to do this, but this works for now
-    # and doesn't throw up and idempotency issues
-    - name: Get remote server ssh fingerprints
-      command: "ssh-keyscan -H {{ (item.split('@').1).split(':').0 }}" # get the actual fqdn from the repo definition
-      changed_when: no
-      check_mode: no
-      retries: 5
-      delay: 5
-      until: borgmatic_ssh_fingerprints.rc == 0
-      register: borgmatic_ssh_fingerprints
-      loop: "{{ borgmatic_location_repositories | select('match', '.*@.*:.*') | list }}" # only match remote ssh hosts
-    - name: known_hosts are registered
-      known_hosts:
-        name: "{{ (item.0.item.split('@').1).split(':').0 }}"
-        key: "{{ item.1 }}"
-        path: "{{ borgmatic_ssh_known_hosts_file }}"
-      loop: "{{ borgmatic_ssh_fingerprints.results | d([]) | subelements('stdout_lines', skip_missing=true) }}"
-      no_log: yes # reduce log spam a little bit
+# needs to be a separate task due to https://github.com/maxhoesel-ansible/ansible-collection-borgbackup/issues/135
+# the solution proposed in the issue breaks idempotency on some systems
+- name: Setup known_hosts
+  ansible.builtin.include_tasks: ssh_known_hosts.yml
   when: borgmatic_ssh_manage_known_hosts
 
 # Append the parameters required for custom known_hosts/key to the ssh command, while making sure not to insert any duplicates.

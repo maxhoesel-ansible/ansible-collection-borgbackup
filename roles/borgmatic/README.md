@@ -14,7 +14,7 @@ then optionally sets up a scheduled backup job. More specifically, this role wil
 
 - The following distributions are currently supported:
   - Ubuntu: 20.04 LTS, 22.04 LTS
-  - Debian: 11, 12
+  - Debian: 11
   - There are no plans to support CentOS/RHEL-based distros right now
 - This role requires root access. Make sure to run this role with `become: yes` or equivalent
 - Supported Borgmatic versions: 1.5 and up
@@ -73,9 +73,8 @@ You can disable this behavior if you want to use the default root ssh settings.
 - Default: `{{ borgmatic_config_path }}/id_rsa`
 
 ##### `borgmatic_ssh_manage_known_hosts`
-- If set to `true`, the role will create and populate a borgmatic-specific known_hosts file with all remote backup server ssh fingerprints
-  - Note that the remote servers need to be online for this to function properly
-- If set to `false`, borgmatic will use the default root known_hosts file instead. This may cause the backup job to fail due to host authentication failures.
+- If set to `true`, the role will create and a borgmatic-specific known_hosts file that borg will then save all remote server fingerprints to.
+- If set to `false`, borgmatic will use the default root known_hosts file instead.
 - Default: `true`
 
 ##### `borgmatic_ssh_known_hosts_file`
