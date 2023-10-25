@@ -11,14 +11,12 @@ build_ignore:
 - .yamllint
 - '*.tar.gz'
 - .venv
-- .tox
 - .pytest_cache
 - scripts
 - .pre-commit-config.yaml
 - .readthedocs.yaml
 - pyproject.toml
 - requirements.txt
-- tox.ini
 - '**/requirements.txt'
 dependencies:
   community.general: '>=1.0.0'
