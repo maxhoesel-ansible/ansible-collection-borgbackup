@@ -122,6 +122,7 @@ N/A
 ### Bumping supported ansible-core versions
 
 1. Update the versions in the [CI config](./.circleci/config.yml)
+2. Update the version in [`requirements.txt`](./requirements.txt)
 
 ### Bumping node python version
 
