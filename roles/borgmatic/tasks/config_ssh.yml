@@ -1,0 +1,38 @@
+#code: language=ansible
+- name: Setup borgmatic ssh key
+  block:
+    - name: Generate SSH keypair
+      command: "ssh-keygen {{ borgmatic_ssh_key_gen_options }} -f {{ borgmatic_ssh_key_path }} -q -N ''"
+      args:
+        creates: "{{ borgmatic_ssh_key_path }}"
+  when: borgmatic_ssh_manage_key
+
+# needs to be a separate task due to https://github.com/maxhoesel-ansible/ansible-collection-borgbackup/issues/135
+# the solution proposed in the issue breaks idempotency on some systems
+- name: Setup known_hosts
+  ansible.builtin.include_tasks: config_ssh_known_hosts.yml
+  when: borgmatic_ssh_manage_known_hosts
+
+# Append the parameters required for custom known_hosts/key to the ssh command, while making sure not to insert any duplicates.
+- name: Set ssh_command
+  block:
+    - name: Generate ssh_command string
+      set_fact:
+        _borgmatic_ssh_command: >-
+          {{ config.ssh_command | d('ssh') }}
+          {% if borgmatic_ssh_manage_key and _borgmatic_ssh_key_string not in config.ssh_command | d('ssh') %}{{ _borgmatic_ssh_key_string }}{% endif %}
+          {% if borgmatic_ssh_manage_known_hosts and _borgmatic_ssh_known_hosts_string not in config.ssh_command | d('ssh') %}{{ _borgmatic_ssh_known_hosts_string }}{% endif %}
+      vars:
+        _borgmatic_ssh_key_string: " -i {{ borgmatic_ssh_key_path }}"
+        _borgmatic_ssh_known_hosts_string: " -o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}"
+        config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.storage, borgmatic_config) }}" # compat with borgmatic < 1.8
+
+    - name: Insert ssh_command into borgmatic <1.8 config
+      ansible.builtin.set_fact:
+        _borgmatic_effective_config: "{{ borgmatic_config | combine({'storage': {'ssh_command': _borgmatic_ssh_command}}, recursive=True) }}"
+      when: _borgmatic_config_with_sections
+    - name: Insert ssh_command into borgmatic >=1.8 config
+      ansible.builtin.set_fact:
+        _borgmatic_effective_config: "{{ borgmatic_config | combine({'ssh_command': _borgmatic_ssh_command}, recursive=True) }}"
+      when: not _borgmatic_config_with_sections
+  when: borgmatic_ssh_manage_key or borgmatic_ssh_manage_known_hosts

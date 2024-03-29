@@ -7,12 +7,17 @@
         name: "borgmatic"
       vars:
         borgmatic_run_backup: yes
-        borgmatic_location_source_directories:
-          - /etc
-        borgmatic_location_repositories:
-          - /tmp/myrepo
-        borgmatic_storage_encryption_passphrase: molecule-test
-        borgmatic_retention_keep_daily: 3
+        borgmatic_run_backup_no_block: false
+        borgmatic_config:
+          location:
+            source_directories:
+              - /etc
+            repositories:
+              - /tmp/myrepo
+          storage:
+            encryption_passphrase: molecule-test
+          retention:
+            keep_daily: 3
         borgmatic_schedule_check_job: yes
         # Don't actually trigger the timer, we run the check job manually
         borgmatic_schedule_check_job_time: "2099-12-31"
@@ -22,10 +27,3 @@
         path: "/tmp/myrepo/lock.roster"
         state: absent
         timeout: 120
-
-    - name: Manually run check job
-      systemd:
-        name: borgmatic-check
-        state: started
-      tags:
-        - molecule-idempotence-notest

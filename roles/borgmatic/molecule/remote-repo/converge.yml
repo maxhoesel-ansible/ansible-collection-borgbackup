@@ -7,10 +7,16 @@
         name: "borgmatic"
       vars:
         borgmatic_run_backup: true
-        borgmatic_location_source_directories:
-          - /etc
-        borgmatic_location_repositories:
-          - borg@borgmatic-server:molecule
-        borgmatic_storage_encryption_passphrase: molecule-test
-        borgmatic_retention_keep_daily: 3
+        borgmatic_run_backup_no_block: false
+        borgmatic_config:
+          location:
+            source_directories:
+              - /etc
+            repositories:
+              - borg@borgmatic-server:molecule
+          storage:
+            encryption_passphrase: molecule-test
+          retention:
+            keep_daily: 3
+        # use pre-generated ssh key so that we can accept it on the server
         borgmatic_ssh_key_path: /tmp/borgmatic_id_rsa

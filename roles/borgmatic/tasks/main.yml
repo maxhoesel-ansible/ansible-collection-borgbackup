@@ -1,29 +1,61 @@
 ---
 # tasks file for borgmatic
+- name: Determine if old-style sectioned Borgmatic config (<1.8) is in use
+  ansible.builtin.set_fact:
+    # location contains source_directories and repositories and must thus always exist
+    _borgmatic_config_with_sections: "{{ borgmatic_config.location is defined }}"
 
-- name: Verify that required parameters are set
-  assert:
-    that:
-      - borgmatic_location_source_directories is defined
-      - borgmatic_location_source_directories | length > 0
-      - borgmatic_location_repositories is defined
-      - borgmatic_location_repositories | length > 0
-  when: borgmatic_manage_config
-- name: Verify that at least one keep option is set
-  assert:
-    that: query('varnames', '^borgmatic_retention_keep_') | length > 0
-  when: borgmatic_manage_config
+- name: Perform variable checks
+  ansible.builtin.include_tasks: check.yml
 
-- ansible.builtin.include_tasks: install.yml
+- name: Copy config to effective config map for further modification
+  set_fact:
+    _borgmatic_effective_config: "{{ borgmatic_config }}"
+
+- name: Borg and borgmatic are installed
+  ansible.builtin.package:
+    name:
+      - borgmatic
+      - borgbackup
   when: borgmatic_install
 
-- block: # noqa unnamed-task
-  - name: Configure SSH
-    ansible.builtin.include_tasks: ssh.yml
-  - name: Generate Borgmatic Config
-    ansible.builtin.include_tasks: config.yml
-    when: borgmatic_manage_config
-  - name: Create Schedule
-    ansible.builtin.include_tasks: schedule.yml
-    when: borgmatic_manage_schedule
+- name: Configure Borgmatic
+  block:
+    - name: Borgmatic config path is present
+      file:
+        path: "{{ borgmatic_config_path }}"
+        state: directory
+        mode: "750"
+        owner: root
+        group: root
+
+    - name: Configure SSH
+      ansible.builtin.include_tasks: config_ssh.yml
+
+    - name: Config is installed
+      template:
+        src: config.yaml.j2
+        dest: "{{ borgmatic_config_path }}/config.yaml"
+        owner: root
+        group: root
+        mode: "640"
+
+    - name: Initialize repos
+      command: "borgmatic init --encryption {{ borgmatic_init_encryption }}"
+      register: _borgmatic_init_command
+      changed_when: _borgmatic_init_command.stdout | length > 0
+      when: borgmatic_init_repos
+
+    - name: Create Schedule
+      ansible.builtin.include_tasks: config_schedule.yml
+      when: borgmatic_manage_schedule
   when: borgmatic_setup_backup
+
+- name: Run backup job
+  systemd:
+    name: borgmatic.service
+    state: started
+    no_block: "{{ borgmatic_run_backup_no_block }}"
+  when: borgmatic_run_backup
+  tags:
+    - molecule-idempotence-notest

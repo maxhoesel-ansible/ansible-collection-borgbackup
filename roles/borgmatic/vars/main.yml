@@ -1,6 +1,0 @@
-borgmatic_config_sections:
-  - location
-  - storage
-  - retention
-  - consistency
-  - hooks

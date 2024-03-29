@@ -11,12 +11,12 @@ borgmatic_init_encryption: repokey
 
 borgmatic_ssh_manage_key: yes
 borgmatic_ssh_key_path: "{{ borgmatic_config_path }}/id_rsa"
+borgmatic_ssh_key_gen_options: "-t ed25519"
 borgmatic_ssh_manage_known_hosts: yes
 borgmatic_ssh_known_hosts_file: "{{ borgmatic_config_path }}/known_hosts"
 
 borgmatic_manage_config: yes
-#borgmatic_location_source_directories:
-#borgmatic_location_repositories Required
+borgmatic_config: {}
 
 borgmatic_manage_schedule: yes
 borgmatic_schedule_on: daily
@@ -26,10 +26,5 @@ borgmatic_schedule_require_ac_power: no
 borgmatic_schedule_persistent: no
 borgmatic_schedule_wakeup: no
 
-borgmatic_schedule_check_job: no
-borgmatic_schedule_check_job_time: "Mon 12:00"
-borgmatic_schedule_check_job_checks:
-  - repository
-  - archives
-
 borgmatic_run_backup: no
+borgmatic_run_backup_no_block: true

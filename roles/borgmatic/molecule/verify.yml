@@ -13,13 +13,6 @@
     assert:
       that: not borgmatic_timer_enabled.changed
 
-  - name: Wait for backup to finish
-    wait_for:
-      path: "/var/borg-server/{{ ansible_fqdn }}/molecule/lock.roster"
-      state: absent
-      timeout: 120
-    delegate_to: borgmatic-server
-
   - name: Get backup information
     command: borgmatic list --json
     changed_when: no
