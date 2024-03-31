@@ -1,0 +1,52 @@
+#code: language=ansible
+- name: Verify that source and repository parameters are set
+  ansible.builtin.assert:
+    that:
+      - config.source_directories is defined
+      - config.source_directories | length > 0
+      - config.repositories is defined
+      - config.repositories | length > 0
+  when: borgmatic_manage_config
+  vars:
+    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+
+- name: Verify that at least one keep_ option is set
+  ansible.builtin.assert:
+    that: >
+      config.keep_within|d("") | length > 0 or
+      config.keep_secondly|d(0) > 0 or
+      config.keep_minutely|d(0) > 0 or
+      config.keep_hourly|d(0) > 0 or
+      config.keep_daily|d(0) > 0 or
+      config.keep_weekly|d(0) > 0 or
+      config.keep_monthly|d(0) > 0 or
+      config.keep_yearly|d(0) > 0
+  when: borgmatic_manage_config
+  vars:
+    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.retention, borgmatic_config) }}" # compat with borgmatic < 1.8
+
+- name: borgmatic_ssh_manage_key | Check that ssh_command does not contain custom private key
+  ansible.builtin.assert:
+    that:
+      - '" -i " not in config.ssh_command|d("")'
+    fail_msg: >
+      borgmatic_ssh_manage_key is enabled, but provided ssh_command points to a different private key.
+      Please remove the private key ("-i") from ssh_command or disable borgmatic_ssh_manage_key if you want to manage the key yourself.
+  when:
+    - borgmatic_manage_config
+    - borgmatic_ssh_manage_key
+  vars:
+    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.storage, borgmatic_config) }}" # compat with borgmatic < 1.8
+
+- name: borgmatic_ssh_manage_known_hosts | Check that ssh_command does not contain custom known_hosts_file
+  ansible.builtin.assert:
+    that:
+      - '" -o UserKnownHostsFile=" not in config.ssh_command|d("")'
+    fail_msg: >
+      borgmatic_ssh_manage_key is enabled, but provided ssh_command points to a different known_hosts file.
+      Please remove "-o UserKnownHostsFile=" from ssh_command or disable borgmatic_ssh_manage_key if you want to manage the key yourself.
+  when:
+    - borgmatic_manage_config
+    - borgmatic_ssh_manage_known_hosts
+  vars:
+    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.storage, borgmatic_config) }}" # compat with borgmatic < 1.8

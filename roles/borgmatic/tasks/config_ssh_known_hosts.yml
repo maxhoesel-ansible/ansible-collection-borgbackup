@@ -1,0 +1,38 @@
+#code: language=ansible
+
+- name: Get repository paths from config
+  ansible.builtin.set_fact:
+    # compat with borgmatic <1.7
+    _borgmatic_repositories: "{{ (borgmatic_config.repositories.0.path is defined | bool) | ternary(config.repositories | map(attribute='path') | list, config.repositories) }}"
+  vars:
+    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+
+- name: Generate list of remote hosts
+  ansible.builtin.set_fact:
+    _borgmatic_remote_hosts: "{{ _borgmatic_repositories | map('regex_search', '(?:ssh:\/\/)?(?:[^@]+@)([^\/:]+)', '\\1') | select | list | flatten | d([]) | unique }}"
+
+# ssh-keyscan returns a multiline string, with each line containing one known_hosts entry
+# We call the known_hosts task once for each remote host, with the task itself
+# then splitting the lines into individual entries that ansible.builtin.known_hosts
+# can understand. I'm sure there is an easier way to do this, but this works for now
+# and doesn't throw up and idempotency issues
+- name: Get remote server ssh fingerprints
+  command: "ssh-keyscan {{ item }}"
+  changed_when: no
+  check_mode: no
+  retries: 5
+  delay: 5
+  # ensure we actually gather *all* ssh keys from the remote host
+  until: >
+    borgmatic_ssh_fingerprints.rc == 0 and
+    "Connection closed" not in borgmatic_ssh_fingerprints.stderr and
+    "Connection reset" not in borgmatic_ssh_fingerprints.stderr
+  register: borgmatic_ssh_fingerprints
+  loop: "{{ _borgmatic_remote_hosts }}"
+
+- name: known_hosts are registered
+  known_hosts:
+    name: "{{ item.0.item }}"
+    key: "{{ item.1 }}"
+    path: "{{ borgmatic_ssh_known_hosts_file }}"
+  loop: "{{ borgmatic_ssh_fingerprints.results | subelements('stdout_lines') }}"

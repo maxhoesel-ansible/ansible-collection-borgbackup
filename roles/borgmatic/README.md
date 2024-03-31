@@ -2,40 +2,40 @@
 
 Install borg+borgmatic and setup a system backup job.
 
-This role installs borg and [borgmatic](https://torsion.org/borgmatic/) (a configuration-driven wrapper around borg),
-then optionally sets up a scheduled backup job. More specifically, this role will:
+This role can perform the following actions for you:
 
-- Create a custom borgmatic configuration based on simple Ansible variables
-- Manage the SSH client keys and known_hosts file for you
-- Setup a schedule using a systemd timer
-- And more! See the role variables below
+- Install borg and [borgmatic](https://torsion.org/borgmatic/) (a configuration-driven wrapper around borg)
+- Set up a scheduled backup job
+- Create a custom borgmatic configuration based on Ansible variables
+- Manage the SSH client keys and known_hosts file for your remote repositories
+- Setup a schedules using systemd timers
 
 ## Requirements
 
-- The following distributions are currently supported:
-  - Ubuntu: 20.04 LTS, 22.04 LTS
-  - Debian: 11
-  - There are no plans to support CentOS/RHEL-based distros right now
-- This role requires root access. Make sure to run this role with `become: yes` or equivalent
-- Supported Borgmatic versions: 1.5 and up
+- A distribution with `borgbackup` and `borgmatic` packages in its repo
+    - This role supports Borgmatic versions `1.5` and newer
+    - We test the following distributions, other distros may work but are unsupported:
+        - Ubuntu 20.04 LTS, 22.04 LTS
+        - Debian 11, 12
+- **This role requires root access**. Make sure to run this role with `become: yes` or as the root user
 
 ## Role Variables
 
-### Limit executed Components
+### Select Tasks to Run
 
-To limit execution of this role to specific components, use the variables below.
+You can disable individual parts of this role if you don't have a use for them.
 By default, all components are executed.
 
 | Variable | Component/Description | Notes |
 |-----------|----------|-------|
-| `borgmatic_install` | Installation of borg + borgmatic |  |
-| `borgmatic_setup_backup` | Configuration of the backup job/environment | Disabling this variable will cause all steps below to be skipped.
-| `borgmatic_init_repos` | Initialization of repositories defined in `borgmatic_location_repositories`, both remote and local
-| `borgmatic_ssh_manage_key` | Management of a client SSH key for borgmatic (see [below](#ssh-management)) |
-| `borgmatic_ssh_manage_known_hosts` | Management of the borgmatic-specific known_hosts file |
-| `borgmatic_manage_config` | Generation of the borgmatic config file |
-| `borgmatic_manage_schedule` | Generation and configuration of the systemd timer + service used for regular backups | Disabling this variable will also disable the check job
-| `borgmatic_schedule_check_job` | Generation of a separate job for running backup repo checks |
+| `borgmatic_install` | Install of borg + borgmatic |  |
+| `borgmatic_setup_backup` | Configure the backup job/environment | **Disabling this variable will cause all the steps listed below to be skipped.**
+| `borgmatic_init_repos` | Initialize the repositories defined in `borgmatic_location_repositories`
+| `borgmatic_ssh_manage_key` | Setup borgmatic to use a dedicated SSH private key for remote repositories (see [below](#ssh-management)) |
+| `borgmatic_ssh_manage_known_hosts` | Setup borgmatic to use a custom known_hosts file for remote repositories |
+| `borgmatic_manage_config` | Generate the borgmatic config file |
+| `borgmatic_manage_schedule` | Generate a the systemd timer + service for regular backups | **Disabling this variable will also disable the check job.**
+| `borgmatic_schedule_check_job` | Generate of a separate job for running backup repo checks |
 
 ### General
 
@@ -49,17 +49,43 @@ By default, all components are executed.
 - Default: `repokey`
 
 ##### `borgmatic_run_backup`
-- Schedule a backup job when this role finishes execution
+- Run the backup job at the end of this roles execution
 - Note that enabling this will cause the role be non-idempotent (it will report changed tasks on every run)
 - Default: `false`
 
+#### `borgmatic_run_backup_no_block`
+- Whether to wait for the backup job to complete when launched through `borgmatic_run_backup`
+- If enabled, the backup job will be launched in the background and Ansible execution can continue
+- Default: `true`
+
+### Configuration
+
+The [borgmatic configuration](https://torsion.org/borgmatic/docs/reference/configuration/) is directly from the `borgmatic_config` variable.
+To set a configuration option for borgmatic, just add the corresponding key to `borgmatic_config`.
+See [above](#example-playbook) for an example.
+
+There are a few special parameters that require extra attention, listed below:
+
+- `source_directories`:
+    - Required for borgmatic to work
+- `repositories`:
+    - Required for borgmatic to work
+    - Read by the role for scanning remote hosts into the `known_hosts` file if `borgmatic_ssh_manage_known_hosts` is enabled
+- `keep_<interval/from>`
+    - At least one `keep_` option is required for borgmatic to work
+- `encryption_passphrase`
+    - Required for initializing the repository if `borgmatic_init_repos` is enabled (default: `true`)
+- `ssh_command`:
+    - If `borgmatic_ssh_manage_key` is enabled, `" -i {{ borgmatic_ssh_key_path }}"` will be appended to point SSH to the borgmatic private key
+        - If you want to supply your own private key to borgmatic, please disable `borgmatic_ssh_manage_key`
+    - If `borgmatic_ssh_manage_known_hosts` is enabled, `" -o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}"`
+        - If you want to supply your own known_hosts file (or use the system default), please disable `borgmatic_ssh_manage_known_hosts`
+
 ### SSH Management
 
-If you are backing up to a remote host via SSH, this role can manage the client ssh key and known_hosts file for you.
-
-This role always executes backups as the root user, but it uses its own ssh user configuration as to
-not interfere with other processes on the system running as root.
-You can disable this behavior if you want to use the default root ssh settings.
+Unless configured otherwise, borgmatic will use the users (always `root` in case of this role) default SSH config/key for connecting to remote repositories.
+By default, this role instead configures a separate SSH environment for borgmatic, so that there is no interference with other services running as root.
+You can customize this behavior with the variables below
 
 ##### `borgmatic_ssh_manage_key`
 - If set to `true`, the role will setup borg to use a custom ssh key found at `{{ borgmatic_ssh_key_path }}`.
@@ -72,6 +98,12 @@ You can disable this behavior if you want to use the default root ssh settings.
 - You can set this to an already existing ssh key if you don't want to use the one generated by this role
 - Default: `{{ borgmatic_config_path }}/id_rsa`
 
+##### `borgmatic_ssh_key_gen_options`
+- Set the `ssh-keygen` options to use when generating the key, such as algorithm and key length
+    - For RSA, use `-t rsa -b <2048/4096>`
+- The following options are added by the role: `-f {{ borgmatic_ssh_key_path }} -N '' -q`
+- Default: `-t ed25519`
+
 ##### `borgmatic_ssh_manage_known_hosts`
 - If set to `true`, the role will create and a borgmatic-specific known_hosts file that borg will then save all remote server fingerprints to.
 - If set to `false`, borgmatic will use the default root known_hosts file instead.
@@ -81,47 +113,6 @@ You can disable this behavior if you want to use the default root ssh settings.
 - Path under which the custom known_hosts file will be saved
 - You can set this to an existing known_hosts file if you don't want to use the one generated by this role
 - Default: `{{ borgmatic_config_path }}/known_hosts`
-
-### Backup settings
-
-This role supports all borgmatic configuration parameters as variables.
-
-The following settings correspond to the configuration options for [borgmatic](https://torsion.org/borgmatic/docs/reference/configuration/).
-See the official page for more details. These parameters are templated out into the borgmatic config, so borg placeholders and the like should work.
-
-Aside from the required parameters that are passed to this role (see below), *all other parameters are optional and left undefined by default.*. This means that unless you specify them, borgmatic will just use its internal defaults for these values.
-
-The format for variable names is: `borgmatic_{section}_{parameter}`. For example, a borgmatic configuration like this:
-
-```yaml
-location:
-  source_directories:
-    - /home
-    - /etc
-    - /var
-storage:
-  encryption_passcommand: secret-tool lookup borg-repository repo-name
-```
-
-can be represented like so:
-
-```yaml
-borgmatic_location_source_directories:
-  - /home
-  - /etc
-  - /var
-borgmatic_storage_encryption_passcomand: secret-tool lookup borg-repository repo-name
-
-```
-
-The following parameters are either required or need extra attention:
-
-| Name | Description | Required | Default |
-|------|-------------|:--------:|---------|
-| `location_source_directories` | List of directories to backup | X | `["/etc", "/home", "/var"]` |
-| `location_repositories` | Paths to target repositories, local or remote | X | undefined |
-| `storage_encryption_passphrase` | Passphrase with which to encrypt the repository | If `borgmatic_init_repos` is set to `true` | undefined
-| `retention_keep_*` | At least one `keep_` parameter is required for retention to work properly | X | undefined
 
 ### Schedule settings
 
@@ -138,57 +129,82 @@ The prefix for all variables in this section is: `borgmatic_schedule_`
 | `persistent` | Whether to immoderately run the backup job if the host "missed" its last run (the random delay still applies) | | `false` |
 | `wakeup` | Whether to wake the system for the backup job if it is in standby. May or may not be supported | | `false` |
 
+#### Scheduling A Separate Check Job
 
-### Scheduling A Separate Check Job
+Previous versions of this role let you set up a separate check job to run at a different time than borgmatic itself, to prevent long backup runs due to checks.
+This feature has been superseded by a built-in Borgmatic config option, please see the documentation [here](https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency) for how to enable it.
 
-On larger repositories, checks may take a very long time to complete.
-If you do not want your checks to run on every backup, there are two options:
+If you previously used this role to configure a separate job, please manually delete the old check job before adjusting your config:
 
-For borgmatic 1.6.2 and newer, you can use the "Check Frequency" feature described [here](https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/#check-frequency). This method is preferred if possible as it prevents conflicts and only requires a few configuration parameters.
-For older borgmatic versions, you can use this roles capability to setup a separate check job described below.
-This check job can be configured to perform one or more of the following actions: `repository`, `archives`, `data` (implies archive), `extract`.
-Please see the [borg documentation](https://borgbackup.readthedocs.io/en/stable/usage/check.html) for more information about these options.
-
----
-**NOTE**
-
-Make sure that the check and backup job timers don't run at the same time! If they do, it is very likely that one of them will fail due to a missing lock on the borg repository.
-
----
-
-Note that the values configured in [Schedule settings](#schedule-settings) will affect the check job (except for `backup` time of course).
-
-##### `borgmatic_schedule_check_job`
-- Whether to enable or disable the separate check job
-- Default: `false`
-
-##### `borgmatic_schedule_check_job_time`
-- [systemd time expression](https://www.freedesktop.org/software/systemd/man/systemd.time.html) defining when the job should run
-- Make sure this time is far enough apart from the backup job to prevent errors due to conflict locks.
-- Default: `Mon 12:00`
-
-##### `borgmatic_schedule_check_job_checks`
-- List of checks to run (see above)
-- Default: `['repository', 'archive']`
+1. Disable the check timer: `systemctl disable --now borgmatic-check.timer`
+2. Stop the check service if it is running: `systemctl stop borgmatic-check.service`
+3. Delete the following unit files:
+    - `/etc/systemd/system/borgmatic-check.timer`
+    - `/etc/systemd/system/borgmatic-check.service`
+4. Reload systemd `systemctl daemon-reload`
 
 ## Example Playbooks
 
+This will setup a backup job to archive important directories onto a remote server that has a repository configured
+
+For Borgmatic 1.8 and newer:
+
 ```yaml
 - hosts: all
-  roles:
-    - role: maxhoesel.borgbackup.borgmatic
-      become: yes
+  become: yes # this role requires root!
+  tasks:
+    - name: Setup backups with borgmatic
+      ansible.builtin.include_role: maxhoesel.borgbackup.borgmatic
       vars:
-        # Always Required*Most parameters
-        borgmatic_location_source_directories:
+        borgmatic_config:
+          # What do we want to backup?
+          source_directories:
           - /home
           - /etc
           - /var
-        # Always Required
-        borgmatic_location_repositories:
-          - borg@remote-backup-server.my.domain:{fqdn}
-        # Required if borgmatic_init_repos is set to true (default)
-        borgmatic_storage_encryption_passphrase: "mysupersecretpassphrase"
-        # At least one retention_keep_ parameter is required
-        borgmatic_retention_keep_daily: 5
+
+          # Where do we want to backup to?
+          repositories:
+          - path: ssh://borg@remote-backup-server.local/./my_repository_name
+            label: backupserver
+
+          # What's our encryption password?
+          # This is required if `borgmatic_init_repos` is set to true (default)
+          encryption_passphrase: "mysupersecretpassphrase"
+
+          # How many backups to we want to keep?
+          keep_daily: 7
+```
+
+For Borgmatic 1.7 and older:
+
+```yaml
+- hosts: all
+  become: yes # this role requires root!
+  tasks:
+    - name: Setup backups with borgmatic
+      ansible.builtin.include_role: maxhoesel.borgbackup.borgmatic
+      vars:
+        borgmatic_config:
+          location:
+            # What do we want to backup?
+            source_directories:
+                - /home
+                - /etc
+                - /var
+
+            # Where do we want to backup to?
+            # For borgmatic <1.7, `borgmatic_repositories` is just a list of strings
+            repositories:
+            - path: ssh://borg@remote-backup-server.local/./my_repository_name
+                label: backupserver
+
+            storage:
+            # What's our encryption password?
+            # This is required if `borgmatic_init_repos` is set to true (default)
+            encryption_passphrase: "mysupersecretpassphrase"
+
+            retention:
+            # How many backups to we want to keep?
+            keep_daily: 7
 ```
