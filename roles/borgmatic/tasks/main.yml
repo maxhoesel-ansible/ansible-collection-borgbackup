@@ -39,6 +39,7 @@
         owner: root
         group: root
         mode: "640"
+      when: borgmatic_manage_config
 
     - name: Initialize repos
       command: "borgmatic init --encryption {{ borgmatic_init_encryption }}"
