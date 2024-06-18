@@ -15,7 +15,7 @@ This role can perform the following actions for you:
 - A distribution with `borgbackup` and `borgmatic` packages in its repo
     - This role supports Borgmatic versions `1.5` and newer
     - We test the following distributions, other distros may work but are unsupported:
-        - Ubuntu 20.04 LTS, 22.04 LTS
+        - Ubuntu 20.04 LTS, 22.04, 24.04 LTS
         - Debian 11, 12
 - **This role requires root access**. Make sure to run this role with `become: yes` or as the root user
 

@@ -9,7 +9,7 @@ The server uses these keys to restrict hosts into a single directory where they 
 ## Requirements
 
 - The following distributions are currently supported:
-  - Ubuntu: 20.04 LTS, 22.04 LTS
+  - Ubuntu: 20.04 LTS, 22.04, 24.04 LTS
   - Debian: 10, 11, 12
   - There are no plans to support CentOS/RHEL-based distros right now
 - This role requires root access. Make sure to run this role with `become: yes` or equivalent
