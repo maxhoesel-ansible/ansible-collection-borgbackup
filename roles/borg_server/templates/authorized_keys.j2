@@ -1,3 +1,4 @@
 {% for host in borg_server_authorized_hosts %}
-command="cd {{ borg_server_backups_path }}/{{ host.name }}; borg serve --restrict-to-path {{ borg_server_backups_path }}/{{ host.name }}",restrict {{ host.key }}
+{% set append_only = " --append-only" if (host.append_only is defined and host.append_only | bool) else '' %}
+command="cd {{ borg_server_backups_path }}/{{ host.name }}; borg serve --restrict-to-path {{ borg_server_backups_path }}/{{ host.name }}{{ append_only }}",restrict {{ host.key }}
 {% endfor %}
