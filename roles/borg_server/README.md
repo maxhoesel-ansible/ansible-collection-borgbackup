@@ -53,6 +53,7 @@ The server uses these keys to restrict hosts into a single directory where they 
       key: ssh-rsa key-goes-here
     - name: host2.my.domain
       key: ssh-rsa key-goes-here
+      append_only: true
     ...
   ```
 
@@ -69,4 +70,5 @@ The server uses these keys to restrict hosts into a single directory where they 
             key: ssh-rsa key-goes-here
           - name: host2.my.domain
             key: ssh-rsa key-goes-here
+            append_only: true
 ```

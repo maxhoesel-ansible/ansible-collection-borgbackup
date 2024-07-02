@@ -11,3 +11,6 @@
         borg_server_authorized_hosts:
           - name: "test-host.localdomain"
             key: "{{ lookup('file', 'files/id_rsa.pub') }}"
+          - name: "test-append.localdomain"
+            key: "{{ lookup('file', 'files/id_rsa.pub') }}"
+            append_only: yes
