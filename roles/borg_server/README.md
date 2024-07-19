@@ -45,6 +45,7 @@ The server uses these keys to restrict hosts into a single directory where they 
 ##### `borg_server_authorized_hosts`
 - List of hosts that will have access to the backup server
 - Each entry is a dict containing the host name and its ssh public key
+    - You can optionally specify `append_only` to run in [Append-only mode](https://borgbackup.readthedocs.io/en/stable/usage/notes.html#append-only-mode-forbid-compaction)
 - Required: yes
 - Example:
   ```yaml
