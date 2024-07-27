@@ -36,3 +36,6 @@
     key: "{{ item.1 }}"
     path: "{{ borgmatic_ssh_known_hosts_file }}"
   loop: "{{ borgmatic_ssh_fingerprints.results | subelements('stdout_lines') }}"
+  when: item.1 is not regex('^#.*')
+  loop_control:
+    label: "{{ item.0.item }} {{ item.1.split(' ').1 }}"
