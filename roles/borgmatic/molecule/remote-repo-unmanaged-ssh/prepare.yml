@@ -44,6 +44,15 @@
 
 - hosts: clients
   tasks:
+    # Emulate manual known-hosts management
     - name: Add server to known_hosts # noqa no-changed-when
       shell: "ssh-keyscan -H {{ item }} >> /root/.ssh/known_hosts"
       loop: "{{ groups.servers }}"
+      retries: 5
+      delay: 5
+      # ensure we actually gather *all* ssh keys from the remote host
+      until: >
+        borgmatic_ssh_fingerprints.rc == 0 and
+        "Connection closed" not in borgmatic_ssh_fingerprints.stderr and
+        "Connection reset" not in borgmatic_ssh_fingerprints.stderr
+      register: borgmatic_ssh_fingerprints
