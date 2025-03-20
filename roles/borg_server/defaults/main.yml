@@ -3,6 +3,7 @@
 
 borg_server_user: borg
 borg_server_config_path: /etc/borg-server
+borg_server_binary_path: borg
 
 borg_server_backups_path: /var/borg-server
 borg_server_backups_set_permissions: yes
