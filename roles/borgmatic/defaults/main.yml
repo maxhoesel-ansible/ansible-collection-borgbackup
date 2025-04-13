@@ -4,6 +4,7 @@
 borgmatic_install: yes
 
 borgmatic_config_path: /etc/borgmatic
+borgmatic_binary_path: /usr/bin/borgmatic
 
 borgmatic_setup_backup: yes
 borgmatic_init_repos: yes
