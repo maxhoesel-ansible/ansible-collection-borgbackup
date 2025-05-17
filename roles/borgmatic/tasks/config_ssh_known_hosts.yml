@@ -17,7 +17,7 @@
 # can understand. I'm sure there is an easier way to do this, but this works for now
 # and doesn't throw up and idempotency issues
 - name: Get remote server ssh fingerprints
-  command: "ssh-keyscan {{ item }}"
+  command: "ssh-keyscan -p {{ hostvars[item].ansible_port | d(22) }} {{ hostvars[item].ansible_host | d(item) }}"
   changed_when: no
   check_mode: no
   retries: 5
@@ -32,10 +32,13 @@
 
 - name: known_hosts are registered
   known_hosts:
-    name: "{{ item.0.item }}"
+    name: "{{ _borgmatic_item_host }}"
     key: "{{ item.1 }}"
     path: "{{ borgmatic_ssh_known_hosts_file }}"
   loop: "{{ borgmatic_ssh_fingerprints.results | subelements('stdout_lines') }}"
   when: item.1 is not regex('^#.*')
+  vars:
+    _borgmatic_item_host: "{{ item.1.split(' ').0 }}"
+    _borgmatic_item_type: "{{ item.1.split(' ').1 }}"
   loop_control:
-    label: "{{ item.0.item }} {{ item.1.split(' ').1 }}"
+    label: "{{ _borgmatic_item_host }} {{ _borgmatic_item_type }}"
