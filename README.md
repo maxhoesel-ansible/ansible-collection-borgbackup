@@ -9,7 +9,7 @@
 ### Dependencies
 
 - A recent version of ansible. We test against the current and the previous major release
-- Python 3.8 or newer on remote hosts
+- Python 3.7 or newer on remote hosts
 
 ### Install via ansible-galaxy
 
