@@ -1,11 +1,19 @@
 #code: language=ansible
-
-- name: Get repository paths from config
+- name: Get repository paths from config (borgmatic <1.7)
   ansible.builtin.set_fact:
-    # compat with borgmatic <1.7
-    _borgmatic_repositories: "{{ (borgmatic_config.repositories.0.path is defined | bool) | ternary(config.repositories | map(attribute='path') | list, config.repositories) }}"
+    _borgmatic_repositories: "{{ _config.repositories }}"
   vars:
-    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+    _config: "{{ _borgmatic_config_with_sections | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+  when:
+    - _config.repositories.0 is string
+
+- name: Get repository paths from config (borgmatic >=1.7)
+  ansible.builtin.set_fact:
+    _borgmatic_repositories: "{{ _config.repositories | map(attribute='path') | list }}"
+  vars:
+    _config: "{{ _borgmatic_config_with_sections | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+  when:
+    - _config.repositories.0 is mapping
 
 - name: Generate list of remote hosts
   ansible.builtin.set_fact:
