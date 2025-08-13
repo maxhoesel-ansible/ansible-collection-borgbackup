@@ -16,7 +16,7 @@ This role can perform the following actions for you:
     - This role supports Borgmatic versions `1.5` and newer
     - We test the following distributions, other distros may work but are unsupported:
         - Ubuntu 22.04 LTS, 24.04 LTS
-        - Debian 11, 12
+        - Debian 11, 12, 13
 - **This role requires root access**. Make sure to run this role with `become: yes` or as the root user
 
 ## Role Variables
