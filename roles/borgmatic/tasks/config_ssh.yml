@@ -25,14 +25,14 @@
       vars:
         _borgmatic_ssh_key_string: " -i {{ borgmatic_ssh_key_path }}"
         _borgmatic_ssh_known_hosts_string: " -o UserKnownHostsFile={{ borgmatic_ssh_known_hosts_file }}"
-        config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.storage, borgmatic_config) }}" # compat with borgmatic < 1.8
+        config: "{{ borgmatic_config.storage | d(borgmatic_config) }}" # compat with borgmatic < 1.8
 
     - name: Insert ssh_command into borgmatic <1.8 config
       ansible.builtin.set_fact:
         _borgmatic_effective_config: "{{ borgmatic_config | combine({'storage': {'ssh_command': _borgmatic_ssh_command}}, recursive=True) }}"
-      when: _borgmatic_config_with_sections
+      when: borgmatic_config.storage is defined
     - name: Insert ssh_command into borgmatic >=1.8 config
       ansible.builtin.set_fact:
         _borgmatic_effective_config: "{{ borgmatic_config | combine({'ssh_command': _borgmatic_ssh_command}, recursive=True) }}"
-      when: not _borgmatic_config_with_sections
+      when: not borgmatic_config.storage is defined
   when: borgmatic_ssh_manage_key or borgmatic_ssh_manage_known_hosts

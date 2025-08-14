@@ -3,7 +3,7 @@
   ansible.builtin.set_fact:
     _borgmatic_repositories: "{{ _config.repositories }}"
   vars:
-    _config: "{{ _borgmatic_config_with_sections | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+    _config: "{{ borgmatic_config.location | d(borgmatic_config) }}" # compat with borgmatic < 1.8
   when:
     - _config.repositories.0 is string
 
@@ -11,7 +11,7 @@
   ansible.builtin.set_fact:
     _borgmatic_repositories: "{{ _config.repositories | map(attribute='path') | list }}"
   vars:
-    _config: "{{ _borgmatic_config_with_sections | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+    _config: "{{ borgmatic_config.location | d(borgmatic_config) }}" # compat with borgmatic < 1.8
   when:
     - _config.repositories.0 is mapping
 
