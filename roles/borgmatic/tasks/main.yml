@@ -1,10 +1,5 @@
 ---
 # tasks file for borgmatic
-- name: Determine if old-style sectioned Borgmatic config (<1.8) is in use
-  ansible.builtin.set_fact:
-    # location contains source_directories and repositories and must thus always exist
-    _borgmatic_config_with_sections: "{{ borgmatic_config.location is defined }}"
-
 - name: Perform variable checks
   ansible.builtin.include_tasks: check.yml
 

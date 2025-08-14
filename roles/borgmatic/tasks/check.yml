@@ -8,7 +8,7 @@
       - config.repositories | length > 0
   when: borgmatic_manage_config
   vars:
-    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.location, borgmatic_config) }}" # compat with borgmatic < 1.8
+    config: "{{ borgmatic_config.location | d(borgmatic_config) }}" # compat with borgmatic < 1.8
 
 - name: Verify that at least one keep_ option is set
   ansible.builtin.assert:
@@ -23,7 +23,7 @@
       config.keep_yearly|d(0) > 0
   when: borgmatic_manage_config
   vars:
-    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.retention, borgmatic_config) }}" # compat with borgmatic < 1.8
+    config: "{{ borgmatic_config.retention | d(borgmatic_config) }}" # compat with borgmatic < 1.8
 
 - name: borgmatic_ssh_manage_key | Check that ssh_command does not contain custom private key
   ansible.builtin.assert:
@@ -36,7 +36,7 @@
     - borgmatic_manage_config
     - borgmatic_ssh_manage_key
   vars:
-    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.storage, borgmatic_config) }}" # compat with borgmatic < 1.8
+    config: "{{ borgmatic_config.storage | d(borgmatic_config) }}" # compat with borgmatic < 1.8
 
 - name: borgmatic_ssh_manage_known_hosts | Check that ssh_command does not contain custom known_hosts_file
   ansible.builtin.assert:
@@ -49,4 +49,4 @@
     - borgmatic_manage_config
     - borgmatic_ssh_manage_known_hosts
   vars:
-    config: "{{ (_borgmatic_config_with_sections | bool) | ternary(borgmatic_config.storage, borgmatic_config) }}" # compat with borgmatic < 1.8
+    config: "{{ borgmatic_config.storage | d(borgmatic_config) }}" # compat with borgmatic < 1.8
