@@ -1,3 +1,23 @@
+[project]
+name = "ansible-collection-borgbackup"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ansible-core==2.21.2",
+    "ansible-lint==26.6.0",
+    "antsibull-docs==2.25.0",
+    "docker==7.2.0",
+    "molecule==26.6.0",
+    "molecule-plugins[docker]==26.7.15",
+    "pre-commit==4.6.1",
+    "pytest==9.1.1",
+    "sphinx-ansible-theme==0.10.4",
+]
+
 [tool.autopep8]
 max_line_length = 120
 ignore = "E402"
