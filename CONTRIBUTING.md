@@ -127,6 +127,7 @@ We use `uv` to lock these dependencies to a specific version for testing.
 
 1. Update the versions in the [CI config](./.circleci/config.yml)
 2. Update the version in [`pyproject.toml`](./requirements.in)
+3. Run `uv sync`
 
 ### Bumping node python version
 
