@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  collection-testing: maxhoesel-ansible/ansible-collection-testing@0.6.0
+  collection-testing: maxhoesel-ansible/ansible-collection-testing@0.6.1
 
 filters: &semver-tagged
   tags:
@@ -13,23 +13,14 @@ workflows:
   ci:
     jobs:
       - collection-testing/pytest:
-          name: Test (ansible-<< matrix.ansible_python_version_tuple >>)
-          pytest_args: >
-            --ci
-            --ansible-version "$ANSIBLE_VERSION"
-            --node-python-version "$PYTHON_VERSION"
+          name: Pytest (<< matrix.version_args >>)
+          pytest_args: --ci << matrix.version_args >>
           parallelism: 3
           matrix:
             parameters:
-              ansible_python_version_tuple: ["2.20,3.9", "2.21,3.9"]
-          pre-steps:
-            - run:
-              name: Split version tuples
-              command: |
-                export ANSIBLE_VERSION_STRING=$(echo "<< matrix.ansible_python_version_tuple >>" | cut -d ',' -f 1)
-                export PYTHON_VERSION_STRING=$(echo "<< matrix.ansible_python_version_tuple >>" | cut -d ',' -f 2)
-                echo export ANSIBLE_VERSION="$ANSIBLE_VERSION_STRING" >> "$BASH_ENV"
-                echo export PYTHON_VERSION="$PYTHON_VERSION_STRING" >> "$BASH_ENV"
+              version_args:
+                - --ansible-version 2.20 --node-python-version 3.9
+                - --ansible-version 2.21 --node-python-version 3.9
       - collection-testing/pre-commit-lint:
           name: Lint
       - collection-testing/publish-github:
