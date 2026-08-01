@@ -1,55 +1,35 @@
 version: 2.1
 
 orbs:
-  collection-testing: maxhoesel-ansible/ansible-collection-testing@0.5.3
+  collection-testing: maxhoesel-ansible/ansible-collection-testing@0.6.0
 
 filters: &semver-tagged
   tags:
-    # Official Semver Regex. Yes, it's LOOOONG
-    only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+    only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*).*$/
   branches:
     ignore: /.*/
-
-executors:
-  pytest:
-    machine:
-      image: ubuntu-2204:2024.08.1 # python 3.12
-    resource_class: large
-
-jobs:
-  test:
-    parameters:
-      parallelism:
-        description: Number of parallel runners
-        type: integer
-      ansible-python-version-tuple:
-        description: Comma-separated version tuple containing Ansible and node python version to use
-        type: string
-    executor: pytest
-    parallelism: << parameters.parallelism >>
-    steps:
-      - run:
-          name: Split version tuples
-          command: |
-            export ANSIBLE_VERSION_STRING=$(echo "<< parameters.ansible-python-version-tuple >>" | cut -d ',' -f 1)
-            export PYTHON_VERSION_STRING=$(echo "<< parameters.ansible-python-version-tuple >>" | cut -d ',' -f 2)
-            echo export ANSIBLE_VERSION="$ANSIBLE_VERSION_STRING" >> "$BASH_ENV"
-            echo export PYTHON_VERSION="$PYTHON_VERSION_STRING" >> "$BASH_ENV"
-      - collection-testing/pytest:
-          pytest-args: >
-            --ci
-            --ansible-version "$ANSIBLE_VERSION"
-            --node-python-version "$PYTHON_VERSION"
 
 workflows:
   ci:
     jobs:
-      - test:
-          name: Test (ansible-<< matrix.ansible-python-version-tuple >>)
+      - collection-testing/pytest:
+          name: Test (ansible-<< matrix.ansible_python_version_tuple >>)
+          pytest_args: >
+            --ci
+            --ansible-version "$ANSIBLE_VERSION"
+            --node-python-version "$PYTHON_VERSION"
           parallelism: 3
           matrix:
             parameters:
-              ansible-python-version-tuple: ["2.20,3.9", "2.21,3.9"]
+              ansible_python_version_tuple: ["2.20,3.9", "2.21,3.9"]
+          pre-steps:
+            - run:
+              name: Split version tuples
+              command: |
+                export ANSIBLE_VERSION_STRING=$(echo "<< parameters.ansible_python_version_tuple >>" | cut -d ',' -f 1)
+                export PYTHON_VERSION_STRING=$(echo "<< parameters.ansible_python_version_tuple >>" | cut -d ',' -f 2)
+                echo export ANSIBLE_VERSION="$ANSIBLE_VERSION_STRING" >> "$BASH_ENV"
+                echo export PYTHON_VERSION="$PYTHON_VERSION_STRING" >> "$BASH_ENV"
       - collection-testing/pre-commit-lint:
           name: Lint
       - collection-testing/publish-github:
