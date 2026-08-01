@@ -22,10 +22,13 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint
+        entry: uv
         language: system
         types: [python]
         args: [
+            "run",
+            "--locked",
+            "pylint",
             "-rn", # Only display messages
             "-sn", # Don't display the score
             "--disable=R",
