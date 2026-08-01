@@ -26,8 +26,8 @@ workflows:
             - run:
               name: Split version tuples
               command: |
-                export ANSIBLE_VERSION_STRING=$(echo "<< parameters.ansible_python_version_tuple >>" | cut -d ',' -f 1)
-                export PYTHON_VERSION_STRING=$(echo "<< parameters.ansible_python_version_tuple >>" | cut -d ',' -f 2)
+                export ANSIBLE_VERSION_STRING=$(echo "<< matrix.ansible_python_version_tuple >>" | cut -d ',' -f 1)
+                export PYTHON_VERSION_STRING=$(echo "<< matrix.ansible_python_version_tuple >>" | cut -d ',' -f 2)
                 echo export ANSIBLE_VERSION="$ANSIBLE_VERSION_STRING" >> "$BASH_ENV"
                 echo export PYTHON_VERSION="$PYTHON_VERSION_STRING" >> "$BASH_ENV"
       - collection-testing/pre-commit-lint:
