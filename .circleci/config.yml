@@ -13,14 +13,13 @@ workflows:
   ci:
     jobs:
       - collection-testing/pytest:
-          name: Pytest (<< matrix.version_args >>)
-          pytest_args: --ci << matrix.version_args >>
+          name: Pytest (<< matrix.pytest_args >>)
           parallelism: 3
           matrix:
             parameters:
-              version_args:
-                - --ansible-version 2.20 --node-python-version 3.9
-                - --ansible-version 2.21 --node-python-version 3.9
+              pytest_args:
+                - --ci --ansible-version 2.20 --node-python-version 3.9
+                - --ci --ansible-version 2.21 --node-python-version 3.9
       - collection-testing/pre-commit-lint:
           name: Lint
       - collection-testing/publish-github:
