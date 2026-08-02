@@ -13,13 +13,15 @@ workflows:
   ci:
     jobs:
       - collection-testing/pytest:
-          name: Pytest (<< matrix.pytest_args >>)
+          name: "Pytest (<< matrix.pytest_args >>, << matrix.uv_sync_args >>)"
           parallelism: 3
           matrix:
             parameters:
               pytest_args:
-                - --ci --ansible-version 2.20 --node-python-version 3.9
-                - --ci --ansible-version 2.21 --node-python-version 3.9
+                - --node-python-version 3.9
+              uv_sync_args:
+                - --group ansible-2.20
+                - --group ansible-2.21
       - collection-testing/pre-commit-lint:
           name: Lint
       - collection-testing/publish-github:
