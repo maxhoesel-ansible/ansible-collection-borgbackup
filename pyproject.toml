@@ -11,7 +11,7 @@ dev = [
     "antsibull-docs==2.25.0",
     "docker==7.2.0",
     "molecule==26.6.0",
-    "molecule-plugins[docker]==26.7.15",
+    "molecule-plugins[docker]==26.9.28",
     "pre-commit==4.6.1",
     "pylint==4.0.6",
     "pytest==9.1.1",
